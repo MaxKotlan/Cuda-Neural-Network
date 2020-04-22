@@ -1,1 +1,1 @@
-"# CudaConvolutionalNeuralNetwork" 
+# CudaConvolutionalNeuralNetwork 
