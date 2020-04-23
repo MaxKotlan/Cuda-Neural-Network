@@ -22,7 +22,7 @@ namespace IDX{
             Database(std::string filename);
 
         protected:
-            std::ifstream database;
+            std::basic_ifstream<unsigned char> database;
             std::string filename;
             unsigned char type;
             unsigned char dimension;

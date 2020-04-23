@@ -10,7 +10,10 @@ namespace IDX
         DEBUG(filename << ": Checking File Headers" << std::endl);
         database.open(filename, std::ios::in | std::ios::binary);
         if (database.is_open()){
-
+            database.read(&type, 1); 
+            database.read(&type, 1);
+            database.read(&type, 1);
+            database.read(&dimension, 1);
         } 
         else { std::cout << filename << ": Could not open. Exiting..." << std::endl; exit(-1); }
     }
