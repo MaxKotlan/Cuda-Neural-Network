@@ -1,6 +1,7 @@
 #ifndef IDX_H
 #define IDX_H
 #include <vector>
+#include <fstream>
 #include <string>
 
 namespace IDX{
@@ -21,6 +22,7 @@ namespace IDX{
             Database(std::string filename);
 
         protected:
+            std::ifstream database;
             std::string filename;
             unsigned char type;
             unsigned char dimension;

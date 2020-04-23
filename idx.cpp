@@ -8,7 +8,11 @@ namespace IDX
 {
     Database::Database(std::string filename){
         DEBUG(filename << ": Checking File Headers" << std::endl);
-        
+        database.open(filename, std::ios::in | std::ios::binary);
+        if (database.is_open()){
+
+        } 
+        else { std::cout << filename << ": Could not open. Exiting..." << std::endl; exit(-1); }
     }
 
     ImageDatabase::ImageDatabase(std::string filename) : Database(filename){
