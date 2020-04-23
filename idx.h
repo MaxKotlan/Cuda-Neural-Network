@@ -42,7 +42,17 @@ namespace IDX{
             int image_count;
             int image_x;
             int image_y;
-            unsigned int start_offset;
+    };
+
+    class LabelDatabase : Database {
+        public:
+
+        LabelDatabase(std::string filename);
+        uint32_t GetLabel(unsigned int index);
+
+        protected:
+            int label_count;
+
     };
 
 }
