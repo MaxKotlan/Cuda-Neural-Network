@@ -17,7 +17,7 @@ namespace IDX
             database.read(&type, 1);
             database.read(&dimension, 1);
         } 
-        else { std::cout << filename << ": Could not open. Exiting..." << std::endl; exit(-1); }
+        else { std::cout << filename << ": Could not open " << filename << ". Exiting..." << std::endl; exit(-1); }
     }
 
     ImageDatabase::ImageDatabase(std::string filename) : Database(filename){
