@@ -37,6 +37,8 @@ namespace IDX{
 
         ImageDatabase(std::string filename);
         std::vector<unsigned char> GetImage(unsigned int index);
+        std::vector<float>         GetNormalizedImage(unsigned int index);
+
 
         protected:
             int image_count;

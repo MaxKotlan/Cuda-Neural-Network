@@ -46,6 +46,13 @@ namespace IDX
         fclose(database);
     }
 
+    std::vector<float> ImageDatabase::GetNormalizedImage(unsigned int index){
+        unsigned int offset = index*image_x*image_y;
+        std::vector<float> result(image_x*image_y);
+        for (int i = 0; i < image_x*image_y; i++) 
+            result[i] = (float)raw_data[i] / (float)UCHAR_MAX;
+        return std::move(result);
+    }
 
     std::vector<unsigned char> ImageDatabase::GetImage(unsigned int index){
         unsigned int offset = index*image_x*image_y;
