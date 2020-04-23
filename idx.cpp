@@ -7,7 +7,7 @@
 namespace IDX
 {
     
-    Database::Database(std::string filename){
+    Database::Database(std::string filename) : filename(filename){
         DEBUG(filename << ": Checking File Headers" << std::endl);
         database.open(filename, std::ios::in | std::ios::binary);
         if (database.is_open()){
