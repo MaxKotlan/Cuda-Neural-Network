@@ -1,2 +1,2 @@
 all:
-	nvcc -I lib/ -o ConvolutionalNeuralNetwork Main.cu
+	nvcc -o ConvolutionalNeuralNetwork -I lib/ Main.cu
