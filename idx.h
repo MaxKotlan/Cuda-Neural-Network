@@ -21,6 +21,7 @@ namespace IDX{
 
             Database(std::string filename);
             uint32_t read_u32();
+            void CopyRawData(unsigned int bytes);
 
         protected:
             std::basic_ifstream<unsigned char> database;
@@ -35,6 +36,7 @@ namespace IDX{
         public:
 
         ImageDatabase(std::string filename);
+        std::vector<unsigned char> GetImage(unsigned int index);
 
         protected:
             int image_count;

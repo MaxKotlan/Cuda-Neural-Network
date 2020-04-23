@@ -29,8 +29,15 @@ namespace IDX
         image_x     = read_u32();
         DEBUG(filename << ": image_x = " << image_x << std::endl);
         image_y     = read_u32();
-        DEBUG(filename << ": image_x = " << image_y << std::endl);
+        DEBUG(filename << ": image_y = " << image_y << std::endl);
+        CopyRawData(image_count*image_x*image_y);
     }
+
+    std::vector<unsigned char> ImageDatabase::GetImage(unsigned int index){
+        unsigned int offset = index*image_x*image_y;
+        return std::move(std::vector<unsigned char>(raw_data.begin()+offset, raw_data.begin()+offset+image_x*image_y));
+    }
+
 
     uint32_t Database::read_u32(){
         uint32_t result;
@@ -38,6 +45,13 @@ namespace IDX
         database.read(temp, sizeof(uint32_t));
         result = temp[3] | (temp[2] << 8) | (temp[1] << 16) | (temp[0] << 24);
         return result;
+    }
+
+    void Database::CopyRawData(unsigned int bytes){
+        DEBUG(filename << ": Copying Raw Data Into Memory" << std::endl);
+        raw_data.reserve(bytes);
+        database.read(raw_data.data(), bytes);
+        DEBUG(filename << ": Finished Copying Raw Data Into Memory" << std::endl);
     }
 
 
