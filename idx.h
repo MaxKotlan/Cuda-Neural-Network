@@ -20,6 +20,7 @@ namespace IDX{
         public:
 
             Database(std::string filename);
+            uint32_t read_u32();
 
         protected:
             std::basic_ifstream<unsigned char> database;
