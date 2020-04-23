@@ -10,8 +10,9 @@ namespace IDX
         DEBUG(filename << ": Checking File Headers" << std::endl);
         database.open(filename, std::ios::in | std::ios::binary);
         if (database.is_open()){
-            database.read(&type, 1); 
-            database.read(&type, 1);
+            unsigned char padding;
+            database.read(&padding, 1); assert(padding == 0); //IDX standard dictates first two bytes are zero
+            database.read(&padding, 1); assert(padding == 0);
             database.read(&type, 1);
             database.read(&dimension, 1);
         } 
