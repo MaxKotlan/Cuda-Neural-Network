@@ -4,18 +4,19 @@
 #include <cassert>
 #include "debug.h"
 
+
 namespace IDX
 {
     
     Database::Database(std::string filename) : filename(filename){
         DEBUG(filename << ": Checking File Headers" << std::endl);
-        database.open(filename, std::ios::in | std::ios::binary);
-        if (database.is_open()){
+        database = fopen(filename.c_str(), "r+");
+        if (database){
             unsigned char padding;
-            database.read(&padding, 1); assert(padding == 0); //IDX standard dictates first two bytes are zero
-            database.read(&padding, 1); assert(padding == 0);
-            database.read(&type, 1);
-            database.read(&dimension, 1);
+            fread(&padding, 1, 1, database); assert(padding == 0); //IDX standard dictates first two bytes are zero
+            fread(&padding, 1, 1, database); assert(padding == 0);
+            fread(&type, 1, 1, database);
+            fread(&dimension, 1, 1, database);
         } 
         else { std::cout << filename << ": Could not open " << filename << ". Exiting..." << std::endl; exit(-1); }
     }
@@ -31,6 +32,7 @@ namespace IDX
         image_y     = read_u32();
         DEBUG(filename << ": image_y = " << image_y << std::endl);
         CopyRawData(image_count*image_x*image_y);
+        fclose(database);
     }
 
 
@@ -41,6 +43,7 @@ namespace IDX
         label_count = read_u32();
         DEBUG(filename << ": image_count = " << label_count << std::endl);
         CopyRawData(label_count);
+        fclose(database);
     }
 
 
@@ -57,7 +60,7 @@ namespace IDX
     uint32_t Database::read_u32(){
         uint32_t result;
         unsigned char temp[sizeof(uint32_t)];
-        database.read(temp, sizeof(uint32_t));
+        fread(&temp, sizeof(uint32_t), 1, database);
         result = temp[3] | (temp[2] << 8) | (temp[1] << 16) | (temp[0] << 24);
         return result;
     }
@@ -65,7 +68,7 @@ namespace IDX
     void Database::CopyRawData(unsigned int bytes){
         DEBUG(filename << ": Copying Raw Data Into Memory" << std::endl);
         raw_data.reserve(bytes);
-        database.read(raw_data.data(), bytes);
+        fread(raw_data.data(), bytes, 1, database);
         DEBUG(filename << ": Finished Copying Raw Data Into Memory" << std::endl);
     }
 

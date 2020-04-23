@@ -24,7 +24,7 @@ namespace IDX{
             void CopyRawData(unsigned int bytes);
 
         protected:
-            std::basic_ifstream<unsigned char> database;
+            FILE* database;
             std::string filename;
             unsigned char type;
             unsigned char dimension;
