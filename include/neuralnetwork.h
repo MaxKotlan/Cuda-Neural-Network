@@ -5,13 +5,7 @@
 class NeuralNetwork{
     public:
 
-    NeuralNetwork(
-        uint32_t inputsize,
-        uint32_t hiddenlayersize,
-        uint32_t hiddenlayercount,
-        uint32_t outputsize
-    ) : _inputsize(inputsize), _hiddenlayersize(hiddenlayersize), _hiddenlayercount(hiddenlayercount), _outputsize(outputsize) 
-    {}
+    NeuralNetwork(uint32_t inputsize, uint32_t hiddenlayersize, uint32_t hiddenlayercount, uint32_t outputsize );
 
     private:
         uint32_t _inputsize;

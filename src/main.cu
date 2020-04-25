@@ -11,7 +11,7 @@ int main(int argc, char** argv){
     IDX::ImageDatabase t10ktrain("../data/train-images.idx3-ubyte");
     IDX::LabelDatabase t10ktrainlab("../data/train-labels.idx1-ubyte");
 
-    for (int k = 0; k < 1000; k++){
+    for (int k = 0; k < 2; k++){
         Image image_data = t10k.GetImage(k);
         std::cout << std::endl << std::endl << "This image is a " << t10klab.GetLabel(k) << std::endl;
         auto normalized = image_data.Normalize();
@@ -20,4 +20,6 @@ int main(int argc, char** argv){
             std::cout << /*std::fixed << std::setprecision(2) <<*/ /* std::hex<< std::setfill('0') << std::setw(2) <<*/ image_data[i];
         }
     }
+
+    NeuralNetwork mynn(t10k.GetImage(0).size(), 16, 2, 10);
 }
