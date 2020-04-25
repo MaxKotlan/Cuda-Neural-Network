@@ -1,2 +1,2 @@
 all:
-	nvcc -o ConvolutionalNeuralNetwork -lcublas -I ../lib/ -I ../include/ Main.cu idx.cpp neuralnetwork.cpp
+	nvcc -o ConvolutionalNeuralNetwork -lcublas -I ../lib/ -I ../include/ main.cu idx.cpp neuralnetwork.cpp

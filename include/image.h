@@ -2,7 +2,7 @@
 #define IMAGE_H
 #include <vector>
 #include <assert.h>
-#include <iostream>
+#include <climits>
 #include <string>
 class Image{
     public:
