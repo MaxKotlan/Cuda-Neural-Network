@@ -38,8 +38,6 @@ namespace IDX{
 
         ImageDatabase(std::string filename);
         Image GetImage(unsigned int index);
-        std::vector<float>         GetNormalizedImage(unsigned int index);
-
 
         protected:
             uint32_t image_count;
