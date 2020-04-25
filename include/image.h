@@ -9,7 +9,7 @@ class Image{
         inline uint32_t x() { return _x;};
         inline uint32_t y() { return _y;};
 
-        unsigned int size() {return (_x*_y);}
+        inline uint32_t size() {return (_x*_y);}
         inline unsigned char& operator[](unsigned int index) { assert(index < size()); return *(begin + index); }
 
         std::vector<float> Normalize(){
