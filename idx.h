@@ -3,6 +3,7 @@
 #include <vector>
 #include <fstream>
 #include <string>
+#include "image.h"
 
 namespace IDX{
 
@@ -36,14 +37,14 @@ namespace IDX{
         public:
 
         ImageDatabase(std::string filename);
-        std::vector<unsigned char> GetImage(unsigned int index);
+        Image GetImage(unsigned int index);
         std::vector<float>         GetNormalizedImage(unsigned int index);
 
 
         protected:
-            int image_count;
-            int image_x;
-            int image_y;
+            uint32_t image_count;
+            uint32_t image_x;
+            uint32_t image_y;
     };
 
     class LabelDatabase : Database {
@@ -53,7 +54,7 @@ namespace IDX{
         uint32_t GetLabel(unsigned int index);
 
         protected:
-            int label_count;
+            uint32_t label_count;
 
     };
 
