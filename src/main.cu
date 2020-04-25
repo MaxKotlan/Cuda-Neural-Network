@@ -21,5 +21,14 @@ int main(int argc, char** argv){
         }
     }
 
-    NeuralNetwork mynn(t10k.GetImage(0).size(), 16, 2, 10);
+    NeuralNetwork mynn(28, 16, 2, 10);
+    std::cout << std::fixed << std::setprecision(2);
+    for (auto layer : mynn._layers){
+        for (int j = 0; j < layer.outputsize; j++){
+            std::cout << "[ ";
+            for (int i = 0; i < layer.inputsize; i++)
+                std::cout << layer.weights[i+j*layer.inputsize];
+            std::cout << " ][ " << "?" << " ] + [ " << layer.biases[j] << "]" << std::endl;
+        }
+    }
 }
