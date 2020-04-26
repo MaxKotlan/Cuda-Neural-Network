@@ -13,7 +13,12 @@ LayerConnector::LayerConnector(uint32_t inputsize, uint32_t outputsize):
         weight = (float)rand() / (float)RAND_MAX;
 };
 
+static int wow = 0;
+
 std::vector<float> LayerConnector::operator()(std::vector<float> &previous){
     //previous * weights + bias
-    return std::move(std::vector<float>(outputsize));
+    auto result = std::vector<float>(outputsize);
+    for (auto &e : result)
+        e = wow++;
+    return std::move(result);
 }
