@@ -10,6 +10,8 @@ class LayerConnector{
         LayerConnector(){};
         LayerConnector(uint32_t inputsize, uint32_t outputsize);
 
+        void InitalizeWithRandomValues();
+
         std::vector<float> operator() (std::vector<float>& neurons);
 
         int size(){
