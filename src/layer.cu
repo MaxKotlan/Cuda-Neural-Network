@@ -111,10 +111,10 @@ std::vector<float> LayerConnector::CalculateOutputNeurons(std::vector<float>& in
         handle, CUBLAS_OP_N, CUBLAS_OP_N, 
         n, m, k, 
         &alpha,
-        thrust::raw_pointer_cast(d_input.data())  , d_input.size(),
-        thrust::raw_pointer_cast(d_weights.data()), d_weights.size(),
+        thrust::raw_pointer_cast(d_input.data())  , n,
+        thrust::raw_pointer_cast(d_weights.data()), k,
         &beta,
-        thrust::raw_pointer_cast(d_output.data()) , d_output.size()
+        thrust::raw_pointer_cast(d_output.data()) , n
     );
 
     cublasDestroy(handle);
