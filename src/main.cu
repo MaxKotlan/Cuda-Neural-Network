@@ -32,6 +32,14 @@ int main(int argc, char** argv){
     //        std::cout << " ][ " << "?" << " ] + [ " << layer.biases[j] << "]" << std::endl;
     //    }
     //}
+    for (int i = 0; i < 60000; i++){
+        std::cout << i << ": ";
+        for (auto res : mynn(t10k.GetImage(i).Normalize()))
+            std::cout << res << " ";
+        std::cout << std::endl;
+    }
+
+
     int k;
     while (std::cin >> k){
         std::cout << "Trying with Image " << k << ": ";

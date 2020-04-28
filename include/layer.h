@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include <vector>
 #include <iostream>
+#include <thrust/device_vector.h>
 
 class LayerConnector{
 
@@ -24,7 +25,10 @@ class LayerConnector{
         uint32_t inputsize;
         uint32_t outputsize;
         std::vector<float> weights;
-        std::vector<float> biases; 
+        std::vector<float> biases;
+        thrust::device_vector<float> d_input;
+        thrust::device_vector<float> d_weights;
+        thrust::device_vector<float> d_biases;
 };
 
 #endif
