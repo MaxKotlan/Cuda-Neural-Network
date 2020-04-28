@@ -22,8 +22,11 @@ _layers(1+hiddenlayercount)
 }
 
 std::vector<float> NeuralNetwork::operator() (std::vector<float>& in){
-    auto input = _layers[0](in);
+    thrust::device_vector<float> din = in;
+    auto input = _layers[0](din);    
     for (int i = 1; i < _layers.size(); i++)
         input = _layers[i](input);
-    return std::move(input);
+    std::vector<float> outvec(input.size());
+    thrust::copy(input.begin(), input.end(), outvec.begin());
+    return std::move(outvec);
 }

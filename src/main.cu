@@ -34,7 +34,7 @@ int main(int argc, char** argv){
     //}
     for (int i = 0; i < 60000; i++){
         std::cout << i << ": ";
-        for (auto res : mynn(t10k.GetImage(i).Normalize()))
+        for (auto res : mynn(t10k.GetImage(0).Normalize()))
             std::cout << res << " ";
         std::cout << std::endl;
     }

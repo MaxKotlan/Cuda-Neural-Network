@@ -25,25 +25,22 @@ void LayerConnector::InitalizeWithRandomValues(){
         weight = max_range*((float)rand() / (float)RAND_MAX)-max_range/2.0f;// / (float)RAND_MAX;
 }
 
-std::vector<float> LayerConnector::operator()(std::vector<float> &previous){
+thrust::device_vector<float> LayerConnector::operator()(thrust::device_vector<float> &d_input){
     //previous * weights + bias
     //testssgem();
-    DEBUG("LayerConnector: Input - "); for (auto e : previous) DEBUG(e << ", "); DEBUG(std::endl); 
-    auto result = CalculateOutputNeurons(previous);
-    DEBUG("LayerConnector: Output - "); for (auto e : result) DEBUG(e << ", "); DEBUG(std::endl); 
+    auto result = CalculateOutputNeurons(d_input);
     return std::move(result);
 }
 
-std::vector<float> LayerConnector::CalculateOutputNeurons(std::vector<float>& input){    
+thrust::device_vector<float> LayerConnector::CalculateOutputNeurons(thrust::device_vector<float>& d_input){    
     cublasHandle_t handle;
     cublasCreate(&handle);
 
     thrust::device_vector<float> d_output(outputsize);
-    thrust::copy(   input.begin(),    input.end(), d_input.begin());
     thrust::copy(d_biases.begin(), d_biases.end(), d_output.begin());
 
     int m = d_output.size();
-    int k = input.size();
+    int k = d_input.size();
     int n = 1;
     float alpha = 1.0;
     float beta  = 1.0; //1.0 because bias vector added and used as output vector
@@ -58,7 +55,6 @@ std::vector<float> LayerConnector::CalculateOutputNeurons(std::vector<float>& in
     );
 
     cublasDestroy(handle);
-    std::vector<float> result(biases.size());
-    thrust::copy(d_output.begin(), d_output.end(), result.begin());
-    return std::move(result);
+
+    return std::move(d_output);
 }

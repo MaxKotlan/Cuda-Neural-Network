@@ -12,9 +12,8 @@ class LayerConnector{
         LayerConnector(uint32_t inputsize, uint32_t outputsize);
 
         void InitalizeWithRandomValues();
-        std::vector<float> CalculateOutputNeurons(std::vector<float>& input);
-
-        std::vector<float> operator() (std::vector<float>& neurons);
+        thrust::device_vector<float> CalculateOutputNeurons(thrust::device_vector<float>& input);
+        thrust::device_vector<float> operator() (thrust::device_vector<float>& neurons);
 
         int size(){
             std::cout << inputsize << "->" << outputsize << " : ";
