@@ -6,15 +6,18 @@
 
 NeuralNetwork::NeuralNetwork(uint32_t inputsize, uint32_t hiddenlayersize, uint32_t hiddenlayercount, uint32_t outputsize) 
 : _inputsize(inputsize), _outputsize(outputsize),
-_layers(std::move(std::vector<LayerConnector>(2+hiddenlayercount)))
+_layers(1+hiddenlayercount)
 {
     DEBUG("NEURALNETWORK: Initalizing with inputsize:" << inputsize << ", hiddenlayersize: " << hiddenlayersize 
     << ", hiddenlayercount: " << hiddenlayercount << ", outputsize: " << outputsize << std::endl);
-    _layers[0] = std::move(LayerConnector(inputsize, hiddenlayersize));
-    for (int i = 0; i <= hiddenlayercount; i++){
-        _layers[i+1] = std::move(LayerConnector(hiddenlayersize, hiddenlayersize));
+    DEBUG("LAYERCONNECTOR 0: Initilizing layer connector " << inputsize << " => " << hiddenlayersize << std::endl);
+    _layers[0] = LayerConnector(inputsize, hiddenlayersize);
+    for (int i = 1; i < hiddenlayercount; i++){
+        DEBUG("LAYERCONNECTOR " <<i<<": Initilizing layer connector " << hiddenlayersize << " => " << hiddenlayersize << std::endl);
+        _layers[i] = LayerConnector(hiddenlayersize, hiddenlayersize);
     }
-    _layers[hiddenlayercount+1] = std::move(LayerConnector(hiddenlayersize, outputsize));
+    DEBUG("LAYERCONNECTOR " <<hiddenlayercount<<": Initilizing layer connector " << hiddenlayersize << " => " << outputsize << std::endl);
+    _layers[hiddenlayercount] = LayerConnector(hiddenlayersize, outputsize);
 
 }
 

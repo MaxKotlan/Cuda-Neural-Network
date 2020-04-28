@@ -34,7 +34,9 @@ int main(int argc, char** argv){
     //}
     int k;
     while (std::cin >> k){
-    for (auto res : mynn(t10k.GetImage(k).Normalize()))
-        std::cout << res << " ";
+        std::cout << "Trying with Image " << k << ": ";
+        for (auto res : mynn(t10k.GetImage(k).Normalize()))
+            std::cout << res << " ";
+        std::cout << std::endl;
     }
 }

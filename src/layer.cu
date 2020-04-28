@@ -1,6 +1,7 @@
 #include "layer.h"
 #include <cublas_v2.h>
 #include <thrust/device_vector.h>
+#include "debug.h"
 
 LayerConnector::LayerConnector(uint32_t inputsize, uint32_t outputsize):
     inputsize(inputsize),
@@ -12,11 +13,12 @@ LayerConnector::LayerConnector(uint32_t inputsize, uint32_t outputsize):
 };
 
 void LayerConnector::InitalizeWithRandomValues(){
+    float max_range=10.0f;
     for (float &bias : biases)
-        bias = 4.0f*((float)rand() / (float)RAND_MAX)-2.0f;
+        bias = max_range*((float)rand() / (float)RAND_MAX)-max_range/2.0f;
 
     for (float &weight : weights)
-        weight = 4.0f*((float)rand() / (float)RAND_MAX)-2.0f;// / (float)RAND_MAX;
+        weight = max_range*((float)rand() / (float)RAND_MAX)-max_range/2.0f;// / (float)RAND_MAX;
 }
 
 void testssgem(){
@@ -79,7 +81,10 @@ void testssgem(){
 std::vector<float> LayerConnector::operator()(std::vector<float> &previous){
     //previous * weights + bias
     //testssgem();
-    return std::move(CalculateOutputNeurons(previous));
+    DEBUG("LayerConnector: Input - "); for (auto e : previous) DEBUG(e << ", "); DEBUG(std::endl); 
+    auto result = CalculateOutputNeurons(previous);
+    DEBUG("LayerConnector: Output - "); for (auto e : result) DEBUG(e << ", "); DEBUG(std::endl); 
+    return std::move(result);
 }
 
 #include "enable_cuda.h"

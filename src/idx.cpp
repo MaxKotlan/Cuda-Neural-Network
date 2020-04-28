@@ -47,6 +47,7 @@ namespace IDX
     }
 
     Image ImageDatabase::GetImage(unsigned int index){
+        assert(index < image_count && index >= 0);
         unsigned int offset = index*image_x*image_y;
         Image result(image_x, image_y, &raw_data[offset]);
         return result;
