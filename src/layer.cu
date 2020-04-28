@@ -78,43 +78,43 @@ void testssgem(){
 
 std::vector<float> LayerConnector::operator()(std::vector<float> &previous){
     //previous * weights + bias
-    testssgem();
+    //testssgem();
     return std::move(CalculateOutputNeurons(previous));
 }
 
 #include "enable_cuda.h"
 #ifdef CUDA_ENABLE
 
-std::vector<float> LayerConnector::CalculateOutputNeurons(std::vector<float>& input){
-    std::vector<float> result(outputsize);
-    
+std::vector<float> LayerConnector::CalculateOutputNeurons(std::vector<float>& input){    
     cublasHandle_t handle;
     cublasCreate(&handle);
 
     thrust::device_vector<float> d_input(input.size());
     thrust::device_vector<float> d_weights(weights.size());
-    thrust::device_vector<float> d_biases(biases.size());
-    thrust::device_vector<float> d_output(result.size());
+    thrust::device_vector<float> d_output(biases.size());
 
-    thrust::copy(input.begin(), input.end(), d_input.begin());
+    thrust::copy(input.begin(),   input.end(),   d_input.begin());
     thrust::copy(weights.begin(), weights.end(), d_weights.begin());
-    thrust::copy(biases.begin(), biases.end(), d_biases.begin());
+    thrust::copy(biases.begin(),  biases.end(),  d_output.begin());
 
+    int m = d_output.size();
+    int k = input.size();
+    int n = 1;
     float alpha = 1.0;
-    float beta  = 1.0;
+    float beta  = 1.0; //1.0 because bias vector added and used as output vector
     cublasSgemm(   
         handle, CUBLAS_OP_N, CUBLAS_OP_N, 
-        outputsize, inputsize, 1, 
+        n, m, k, 
         &alpha,
         thrust::raw_pointer_cast(d_weights.data()), d_weights.size(),
         thrust::raw_pointer_cast(d_input.data())  , d_input.size(),
         &beta,
-        thrust::raw_pointer_cast(d_biases.data()) , d_biases.size()
+        thrust::raw_pointer_cast(d_output.data()) , d_output.size()
     );
 
     cublasDestroy(handle);
+    std::vector<float> result(biases.size());
     thrust::copy(d_output.begin(), d_output.end(), result.begin());
-
     return std::move(result);
 }
 
