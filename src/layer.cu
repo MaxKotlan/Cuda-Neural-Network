@@ -21,9 +21,12 @@ void LayerConnector::InitalizeWithRandomValues(){
 
 void testssgem(){
 
-    std::vector<float> a{1.,2.,3.,4.,5.,6.};
-    std::vector<float> b{7.,8.,9.,10.};
-    std::vector<float> c{1.,1.,1.,1.,1.,1.};
+    std::vector<float> a{1.,2.,
+                         3.,4.,
+                         5.,6.};
+    std::vector<float> b{7.,8.,9.,10.,
+                         11.,12.,13.,14.};
+    std::vector<float> c{1.,1.,1.,1.,1.,1.,1.,1.,1.,1.,1.,1.,};
 
     thrust::device_vector<float> d_a(a.size());
     thrust::device_vector<float> d_b(b.size());
@@ -40,7 +43,7 @@ void testssgem(){
 
     int m = 3;
     int k = 2;
-    int n = 2;
+    int n = 4;
 
     cublasSgemm(   
         handle, CUBLAS_OP_N, CUBLAS_OP_N, 
