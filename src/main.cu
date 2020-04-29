@@ -22,7 +22,8 @@ int main(int argc, char** argv){
         }
     }*/
 
-    NeuralNetwork mynn(28*28, 16, 10, 10);
+    srand(132);
+    NeuralNetwork mynn(28*28, 16, 2, 10);
     std::cout << std::fixed << std::setprecision(2);
     //for (auto layer : mynn._layers){
     //    for (int j = 0; j < layer.outputsize; j++){
@@ -33,7 +34,7 @@ int main(int argc, char** argv){
     //    }
     //}
     for (int i = 0; i < 60000; i++){
-        std::cout << i << ": ";
+        std::cout << "Image " << i << ": Output Neurons: ";
         for (auto res : mynn(t10k.GetImage(i).Normalize()))
             std::cout << res << " ";
         std::cout << std::endl;
