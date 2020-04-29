@@ -1,15 +1,17 @@
 #ifndef ACTIVATION_H
 #define ACTIVATION_H
-#include <tgmath.h>
+#include <cuda_runtime.h>
 
-namespace ACTIVATION
-{
+namespace Activation{
 
-    inline float Sigmoid(float input){
-        return (1 / (1 + exp(-input));
-    }
+    class Sigmoid {
+        public:
 
-};
-
+        __device__ inline float operator()(float input) const {
+            return (1 / (1 + exp(-input)));
+        }
+    };
+    
+}
 
 #endif

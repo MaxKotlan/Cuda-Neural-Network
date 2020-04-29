@@ -1,6 +1,7 @@
 #include "layer.h"
 #include <cublas_v2.h>
 #include "debug.h"
+#include "activation.h"
 
 LayerConnector::LayerConnector(uint32_t inputsize, uint32_t outputsize):
     inputsize(inputsize),
@@ -53,8 +54,7 @@ thrust::device_vector<float> LayerConnector::CalculateOutputNeurons(thrust::devi
         &beta,
         thrust::raw_pointer_cast(d_output.data()) , n
     );
-
     cublasDestroy(handle);
-
+    thrust::transform(d_output.begin(), d_output.end(), d_output.begin(), Activation::Sigmoid());
     return std::move(d_output);
 }
