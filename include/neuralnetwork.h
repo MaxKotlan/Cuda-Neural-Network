@@ -11,7 +11,7 @@ class NeuralNetwork{
 
     /*Forward Propogate Data*/
     std::vector<float> operator() (std::vector<float>& input);
-    std::vector<float> ForwardPropogate(std::vector<float>& input);
+    std::vector<float> ForwardPropagate(std::vector<float>& input);
 
     /*Cost of a single example*/
     float SingleCost(std::vector<float>& input, uint32_t correct);

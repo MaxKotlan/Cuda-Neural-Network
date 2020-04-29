@@ -22,10 +22,10 @@ _layers(1+hiddenlayercount)
 }
 
 std::vector<float> NeuralNetwork::operator() (std::vector<float>& in){
-    return std::move(ForwardPropogate(in));
+    return std::move(ForwardPropagate(in));
 }
 
-std::vector<float> NeuralNetwork::ForwardPropogate(std::vector<float>& input){
+std::vector<float> NeuralNetwork::ForwardPropagate(std::vector<float>& input){
     thrust::device_vector<float> d_input = input;
     for (int i = 0; i < _layers.size(); i++)
         d_input = _layers[i](d_input);
