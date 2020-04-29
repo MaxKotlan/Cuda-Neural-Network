@@ -27,8 +27,10 @@ std::vector<float> NeuralNetwork::operator() (std::vector<float>& in){
 
 std::vector<float> NeuralNetwork::ForwardPropagate(std::vector<float>& input){
     thrust::device_vector<float> d_input = input;
-    for (int i = 0; i < _layers.size(); i++)
-        d_input = _layers[i](d_input);
+    
+    for (auto layer : _layers)
+        d_input = layer(d_input);
+
     std::vector<float> outvec(d_input.size());
     thrust::copy(d_input.begin(), d_input.end(), outvec.begin());
     return std::move(outvec);
