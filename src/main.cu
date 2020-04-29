@@ -33,19 +33,13 @@ int main(int argc, char** argv){
     //        std::cout << " ][ " << "?" << " ] + [ " << layer.biases[j] << "]" << std::endl;
     //    }
     //}
-    for (int i = 0; i < 60000; i++){
+    auto image = t10k.GetImage(0).Normalize();
+    for (int i = 0; i < 10; i++){
         std::cout << "Image " << i << ": Output Neurons: ";
-        for (auto res : mynn(t10k.GetImage(i).Normalize()))
-            std::cout << res << " ";
-        std::cout << std::endl;
-    }
-
-
-    int k;
-    while (std::cin >> k){
-        std::cout << "Trying with Image " << k << ": ";
-        for (auto res : mynn(t10k.GetImage(k).Normalize()))
-            std::cout << res << " ";
+        auto result = mynn(image);
+        for (auto e : result)
+            std::cout << e << ", ";
+        mynn.Reset();
         std::cout << std::endl;
     }
 }

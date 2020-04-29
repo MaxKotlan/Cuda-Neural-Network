@@ -16,6 +16,8 @@ class NeuralNetwork{
     /*Cost of a single example*/
     float SingleCost(std::vector<float>& input, uint32_t correct);
 
+    void Reset();
+
     private:
         uint32_t _inputsize;
         uint32_t _outputsize;

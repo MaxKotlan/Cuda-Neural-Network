@@ -13,8 +13,6 @@ LayerConnector::LayerConnector(uint32_t inputsize, uint32_t outputsize):
     d_biases(outputsize)
 {
     InitalizeWithRandomValues();
-    thrust::copy(weights.begin(), weights.end(), d_weights.begin());
-    thrust::copy(biases.begin(),  biases.end(),  d_biases.begin());
 };
 
 void LayerConnector::InitalizeWithRandomValues(){
@@ -24,6 +22,9 @@ void LayerConnector::InitalizeWithRandomValues(){
 
     for (float &weight : weights)
         weight = max_range*((float)rand() / (float)RAND_MAX)-max_range/2.0f;// / (float)RAND_MAX;
+    
+    thrust::copy(weights.begin(), weights.end(), d_weights.begin());
+    thrust::copy(biases.begin(),  biases.end(),  d_biases.begin());
 }
 
 thrust::device_vector<float> LayerConnector::operator()(thrust::device_vector<float> &d_input){
