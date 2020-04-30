@@ -110,14 +110,25 @@ void LayerConnector::CalculateGradient(thrust::device_vector<float>& d_cost){
 }
 
 thrust::device_vector<float> LayerConnector::CalculatePreviousLayerDelta(){
-    thrust::device_vector<float> previous_layer_delta(inputsize);
+    thrust::device_vector<float> previous_layer_delta(outputsize);
 
-    /*This isnt doing what I want it to do*/
+    /*Im not sure if this is correct*/
     MatrixMultiply(
         _nextLayer->inputsize, _nextLayer->outputsize, 1,
         1.0, 0.0, 
         _nextLayer->d_weights, _nextLayer->d_activation_delta, previous_layer_delta
     );
+
+    /*
+    for (int i = 0; i < inputsize; i++){
+        thrust::transform(
+            _nextLayer->d_weights.begin()+i*inputsize,
+            _nextLayer->d_weights.begin()+i*inputsize+outputsize,
+            _nextLayer->d_activation_delta, 
+            thrust::multiplies<float>()
+        );
+    }
+    thrust*/
 
     return std::move(previous_layer_delta);
 }
@@ -130,7 +141,7 @@ thrust::device_vector<float> LayerConnector::GenerateActivationDelta(const thrus
 
 void LayerConnector::ApplyDeltas(){
     /*Multiply Deltas by the learning rate*/
-    float learningrate = 1.0;
+    float learningrate = 0.01;
     thrust::transform(d_delta_weights.begin(), d_delta_weights.end(), thrust::make_constant_iterator(learningrate), d_delta_weights.begin(), thrust::multiplies<float>());
     thrust::transform(d_delta_biases.begin(), d_delta_biases.end(), thrust::make_constant_iterator(learningrate), d_delta_biases.begin(), thrust::multiplies<float>());
 
