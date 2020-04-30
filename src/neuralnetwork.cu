@@ -25,21 +25,38 @@ std::vector<float> NeuralNetwork::operator() (std::vector<float>& in){
     return std::move(ForwardPropagate(in));
 }
 
-std::vector<float> NeuralNetwork::ForwardPropagate(std::vector<float>& input){
+thrust::device_vector<float> NeuralNetwork::DeviceForwardPropagate(std::vector<float>& input){
     thrust::device_vector<float> d_input = input;
-    
     for (auto &layer : _layers)
         d_input = layer(d_input);
+    return std::move(d_input);
+}
 
+
+std::vector<float> NeuralNetwork::ForwardPropagate(std::vector<float>& input){
+    thrust::device_vector<float> d_input = input;
+    d_input = DeviceForwardPropagate(input);
     std::vector<float> outvec(d_input.size());
     thrust::copy(d_input.begin(), d_input.end(), outvec.begin());
     return std::move(outvec);
 }
 
 void NeuralNetwork::TrainSingle(std::vector<float>& input, uint32_t correct){
-    for (int i = _layers.size()-1; i >= 0; i--){
-        _layers[i].CalculateGradient();
-    } 
+    auto outputlayer = DeviceForwardPropagate(input);
+
+    /*Definetly making a custom transform for this*/
+
+    float correctvalue = 1.0;
+    float incorrectvalue = 0.0;
+
+    thrust::device_vector<float> cost(outputlayer.size());
+    thrust::fill(cost.begin(), cost.end(), incorrectvalue);
+    thrust::copy(&correctvalue, &correctvalue+1, (cost.begin()+correct));
+    thrust::transform(outputlayer.begin(), outputlayer.end(), cost.begin(), cost.begin(), thrust::minus<float>());
+    thrust::transform(cost.begin(), cost.end(), thrust::make_constant_iterator(2), cost.begin(), thrust::multiplies<float>());
+    //for (int i = _layers.size()-1; i >= 0; i--){
+        _layers[_layers.size()-1].CalculateGradient(outputlayer, cost);
+    //} 
 }
 
 void NeuralNetwork::Reset(){

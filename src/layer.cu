@@ -62,12 +62,36 @@ thrust::device_vector<float> LayerConnector::CalculateOutputNeurons(thrust::devi
     return std::move(d_output);
 }
 
-void LayerConnector::CalculateGradient(){
-    std::vector<float> input(d_input.size());
-    thrust::copy(d_input.begin(), d_input.end(), input.begin());
-    std::cout << "Layer " << lay++ << ": ";
-    for (auto e : input){
+void LayerConnector::CalculateGradient(thrust::device_vector<float>& outputlayer, thrust::device_vector<float>& d_cost){
+    thrust::device_vector<float> d_delta_weight(outputsize*inputsize);
+    thrust::device_vector<float> d_activation_delta(outputlayer.size());
+    d_activation_delta = outputlayer;
+    thrust::transform(d_activation_delta.begin(), d_activation_delta.end(), d_activation_delta.begin(), Activation::SigmoidDerivative());
+    thrust::transform(d_activation_delta.begin(), d_activation_delta.end(), d_cost.begin(), d_cost.begin(), thrust::multiplies<float>());
+
+    cublasHandle_t handle;
+    cublasCreate(&handle);
+    int m = d_input.size();
+    int k = 1;
+    int n = d_cost.size();
+    float alpha = 1.0;
+    float beta  = 0.0;
+    cublasSgemm(   
+        handle, CUBLAS_OP_N, CUBLAS_OP_N, 
+        n, m, k, 
+        &alpha,
+        thrust::raw_pointer_cast(d_cost.data()),   n,
+        thrust::raw_pointer_cast(d_input.data()),  k,
+        &beta,
+        thrust::raw_pointer_cast(d_delta_weight.data()), n
+    );
+    cublasDestroy(handle);
+
+    thrust::copy(d_delta_weight.begin(), d_delta_weight.end(), weights.begin());
+    std::cout << std::endl << "Weights: " << std::endl;
+    for (auto e : weights){
         std::cout << e << " ";
     }
     std::cout << std::endl;
+
 }
