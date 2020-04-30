@@ -46,6 +46,8 @@ void NeuralNetwork::TrainSingle(std::vector<float>& input, uint32_t correct){
 
     /*Definetly making a custom transform for this*/
 
+    std::cout << "Correct: " << correct;
+
     float correctvalue = 1.0;
     float incorrectvalue = 0.0;
 

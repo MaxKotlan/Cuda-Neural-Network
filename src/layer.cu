@@ -35,10 +35,7 @@ thrust::device_vector<float> LayerConnector::operator()(thrust::device_vector<fl
     return std::move(result);
 }
 
-thrust::device_vector<float> LayerConnector::CalculateOutputNeurons(thrust::device_vector<float>& d_input_new){    
-    //cublasHandle_t handle;
-    //cublasCreate(&handle);
-
+thrust::device_vector<float> LayerConnector::CalculateOutputNeurons(thrust::device_vector<float>& d_input_new){
     d_input = std::move(d_input_new);
 
     thrust::device_vector<float> d_output(outputsize);
