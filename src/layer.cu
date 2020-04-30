@@ -2,6 +2,7 @@
 #include <cublas_v2.h>
 #include "debug.h"
 #include "activation.h"
+#include "matrix.h"
 
 LayerConnector::LayerConnector(uint32_t inputsize, uint32_t outputsize):
     inputsize(inputsize),
@@ -35,29 +36,20 @@ thrust::device_vector<float> LayerConnector::operator()(thrust::device_vector<fl
 }
 
 thrust::device_vector<float> LayerConnector::CalculateOutputNeurons(thrust::device_vector<float>& d_input_new){    
-    cublasHandle_t handle;
-    cublasCreate(&handle);
+    //cublasHandle_t handle;
+    //cublasCreate(&handle);
 
     d_input = std::move(d_input_new);
 
     thrust::device_vector<float> d_output(outputsize);
     thrust::copy(d_biases.begin(), d_biases.end(), d_output.begin());
 
-    int m = d_output.size();
-    int k = d_input.size();
-    int n = 1;
-    float alpha = 1.0;
-    float beta  = 1.0; //1.0 because bias vector added and used as output vector
-    cublasSgemm(   
-        handle, CUBLAS_OP_N, CUBLAS_OP_N, 
-        n, m, k, 
-        &alpha,
-        thrust::raw_pointer_cast(d_input.data())  , n,
-        thrust::raw_pointer_cast(d_weights.data()), k,
-        &beta,
-        thrust::raw_pointer_cast(d_output.data()) , n
+    MatrixMultiply(
+        d_output.size(), d_input.size(), 1,
+        1.0,1.0,
+        d_weights, d_input, d_output
     );
-    cublasDestroy(handle);
+
     thrust::transform(d_output.begin(), d_output.end(), d_output.begin(), Activation::Sigmoid());
     return std::move(d_output);
 }
@@ -69,25 +61,13 @@ void LayerConnector::CalculateGradient(thrust::device_vector<float>& outputlayer
     thrust::transform(d_activation_delta.begin(), d_activation_delta.end(), d_activation_delta.begin(), Activation::SigmoidDerivative());
     thrust::transform(d_activation_delta.begin(), d_activation_delta.end(), d_cost.begin(), d_cost.begin(), thrust::multiplies<float>());
 
-    cublasHandle_t handle;
-    cublasCreate(&handle);
-    int m = d_input.size();
-    int k = 1;
-    int n = d_cost.size();
-    float alpha = 1.0;
-    float beta  = 0.0;
-    cublasSgemm(   
-        handle, CUBLAS_OP_N, CUBLAS_OP_N, 
-        n, m, k, 
-        &alpha,
-        thrust::raw_pointer_cast(d_cost.data()),   n,
-        thrust::raw_pointer_cast(d_input.data()),  k,
-        &beta,
-        thrust::raw_pointer_cast(d_delta_weight.data()), n
+    MatrixMultiply(
+        d_input.size(), 1, d_cost.size(),
+        1.0, 0.0, 
+        d_input, d_cost, d_delta_weight
     );
-    cublasDestroy(handle);
 
-    float learningrate = 0.1;
+    float learningrate = 1.0;
     thrust::transform(d_delta_weight.begin(), d_delta_weight.end(), thrust::make_constant_iterator(learningrate), d_delta_weight.begin(), thrust::multiplies<float>());
     thrust::transform(d_weights.begin(), d_weights.end(), d_delta_weight.begin(), d_weights.begin(), thrust::minus<float>());
 
