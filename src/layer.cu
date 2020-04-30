@@ -10,6 +10,7 @@ LayerConnector::LayerConnector(uint32_t inputsize, uint32_t outputsize):
     biases(outputsize), 
     weights(inputsize*outputsize),
     d_input(inputsize),
+    d_output_ref(nullptr),
     d_weights(inputsize*outputsize),
     d_biases(outputsize)
 {
@@ -51,10 +52,19 @@ thrust::device_vector<float> LayerConnector::CalculateOutputNeurons(thrust::devi
     return std::move(d_output);
 }
 
-void LayerConnector::CalculateGradient(thrust::device_vector<float>& outputlayer, thrust::device_vector<float>& d_cost){
+void LayerConnector::CalculateGradient(thrust::device_vector<float>& d_cost){
+    if (d_output_ref == nullptr){
+        std::cerr << " \n\
+        ERROR. You must set a reference to the input of the next layer to calculate the gradient.\n \
+        Please do this by calling SetOutputReference( [your layer].getInputReference() )\n \
+        before you call CalculateGradient().\n \
+        ";
+        exit(-1);
+    }
+    
     thrust::device_vector<float> d_delta_weight(outputsize*inputsize);
-    thrust::device_vector<float> d_activation_delta(outputlayer.size());
-    d_activation_delta = outputlayer;
+    thrust::device_vector<float> d_activation_delta(d_output_ref->size());
+    d_activation_delta = *d_output_ref;
     thrust::transform(d_activation_delta.begin(), d_activation_delta.end(), d_activation_delta.begin(), Activation::SigmoidDerivative());
     thrust::transform(d_activation_delta.begin(), d_activation_delta.end(), d_cost.begin(), d_cost.begin(), thrust::multiplies<float>());
 

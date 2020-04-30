@@ -19,6 +19,11 @@ _layers(1+hiddenlayercount)
     DEBUG("LAYERCONNECTOR " <<hiddenlayercount<<": Initilizing layer connector " << hiddenlayersize << " => " << outputsize << std::endl);
     _layers[hiddenlayercount] = LayerConnector(hiddenlayersize, outputsize);
 
+
+    for (int i = 0; i < _layers.size()-1; i++){
+        _layers[i].SetOutputReference(_layers[i+1].GetInputReference());
+    }
+
 }
 
 std::vector<float> NeuralNetwork::operator() (std::vector<float>& in){
@@ -56,8 +61,10 @@ void NeuralNetwork::TrainSingle(std::vector<float>& input, uint32_t correct){
     thrust::copy(&correctvalue, &correctvalue+1, (cost.begin()+correct));
     thrust::transform(outputlayer.begin(), outputlayer.end(), cost.begin(), cost.begin(), thrust::minus<float>());
     thrust::transform(cost.begin(), cost.end(), thrust::make_constant_iterator(2), cost.begin(), thrust::multiplies<float>());
+    
+    _layers[_layers.size()-1].SetOutputReference(&outputlayer);
     //for (int i = _layers.size()-1; i >= 0; i--){
-        _layers[_layers.size()-1].CalculateGradient(outputlayer, cost);
+        _layers[_layers.size()-1].CalculateGradient(cost);
     //} 
 }
 
