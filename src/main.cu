@@ -34,7 +34,7 @@ int main(int argc, char** argv){
     //    }
     //}
     auto image = t10k.GetImage(0).Normalize();
-    for (int i = 0; i < 10; i++){
+    for (int i = 0; i < 1000; i++){
         std::cout << "Image " << i << ": Output Neurons: ";
         auto result = mynn(image);
         for (auto e : result)

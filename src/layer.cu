@@ -87,11 +87,16 @@ void LayerConnector::CalculateGradient(thrust::device_vector<float>& outputlayer
     );
     cublasDestroy(handle);
 
+    float learningrate = 0.1;
+    thrust::transform(d_delta_weight.begin(), d_delta_weight.end(), thrust::make_constant_iterator(learningrate), d_delta_weight.begin(), thrust::multiplies<float>());
+    thrust::transform(d_weights.begin(), d_weights.end(), d_delta_weight.begin(), d_weights.begin(), thrust::minus<float>());
+
+    /*
     thrust::copy(d_delta_weight.begin(), d_delta_weight.end(), weights.begin());
     std::cout << std::endl << "Weights: " << std::endl;
     for (auto e : weights){
         std::cout << e << " ";
     }
-    std::cout << std::endl;
+    std::cout << std::endl;*/
 
 }
