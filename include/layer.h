@@ -22,6 +22,9 @@ class LayerConnector{
         inline void SetOutputReference(thrust::device_vector<float>* refoutput) { d_output_ref = refoutput; }
         inline thrust::device_vector<float>* GetInputReference() { return &d_input; };
 
+        thrust::device_vector<float> GenerateActivationDelta(const thrust::device_vector<float>& output_layer);
+        void ApplyDeltas();
+
     protected:
         uint32_t inputsize;
         uint32_t outputsize;
@@ -31,6 +34,9 @@ class LayerConnector{
         thrust::device_vector<float>* d_output_ref; //refrence to output stored in next layer
         thrust::device_vector<float> d_weights;
         thrust::device_vector<float> d_biases;
+        thrust::device_vector<float> d_delta_weights;
+        thrust::device_vector<float> d_delta_biases;
+        
         LayerConnector* _nextLayer;
         NeuralNetwork*  _neuralnetwork;
 };

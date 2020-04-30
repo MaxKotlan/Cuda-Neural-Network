@@ -14,7 +14,9 @@ LayerConnector::LayerConnector(uint32_t inputsize, uint32_t outputsize, NeuralNe
     d_weights(inputsize*outputsize),
     d_biases(outputsize),
     _nextLayer(nullptr),
-    _neuralnetwork(network)
+    _neuralnetwork(network),
+    d_delta_weights(outputsize*inputsize),
+    d_delta_biases(outputsize)
 {
     if (network == nullptr){
         std::cerr << " \n\
@@ -71,23 +73,31 @@ void LayerConnector::CalculateGradient(thrust::device_vector<float>& d_cost){
         exit(-1);
     }
     
-    thrust::device_vector<float> d_delta_weight(outputsize*inputsize);
-    thrust::device_vector<float> d_delta_bias(outputsize);
-    thrust::device_vector<float> d_activation_delta(d_output_ref->size());
-    d_activation_delta = *d_output_ref;
-    thrust::transform(d_activation_delta.begin(), d_activation_delta.end(), d_activation_delta.begin(), Activation::SigmoidDerivative());
-    thrust::transform(d_activation_delta.begin(), d_activation_delta.end(), d_cost.begin(), d_cost.begin(), thrust::multiplies<float>());
+    if (_nextLayer == nullptr) {
 
-    MatrixMultiply(
-        d_input.size(), 1, d_cost.size(),
-        1.0, 0.0, 
-        d_input, d_cost, d_delta_weight
-    );
+        thrust::device_vector<float> d_activation_delta = GenerateActivationDelta(*d_output_ref);
+        thrust::transform(d_activation_delta.begin(), d_activation_delta.end(), d_cost.begin(), d_cost.begin(), thrust::multiplies<float>());
 
-    float learningrate = 1.0;
-    thrust::transform(d_delta_weight.begin(), d_delta_weight.end(), thrust::make_constant_iterator(learningrate), d_delta_weight.begin(), thrust::multiplies<float>());
-    thrust::transform(d_weights.begin(), d_weights.end(), d_delta_weight.begin(), d_weights.begin(), thrust::minus<float>());
+        MatrixMultiply(
+            d_input.size(), 1, d_cost.size(),
+            1.0, 0.0, 
+            d_input, d_cost, d_delta_weights
+        );
 
+        thrust::transform(d_cost.begin(), d_cost.end(), d_biases.begin(), d_delta_biases.begin(), thrust::multiplies<float>());
+
+    } else {
+
+        thrust::device_vector<float> d_activation_delta = GenerateActivationDelta(*d_output_ref);
+        MatrixMultiply(
+            d_input.size(), 1, d_activation_delta.size(),
+            1.0, 0.0, 
+            d_input, d_activation_delta, d_delta_weights
+        );
+
+        thrust::transform(d_activation_delta.begin(), d_activation_delta.end(), d_biases.begin(), d_delta_biases.begin(), thrust::multiplies<float>());
+
+    }
     /*
     thrust::copy(d_delta_weight.begin(), d_delta_weight.end(), weights.begin());
     std::cout << std::endl << "Weights: " << std::endl;
@@ -95,5 +105,19 @@ void LayerConnector::CalculateGradient(thrust::device_vector<float>& d_cost){
         std::cout << e << " ";
     }
     std::cout << std::endl;*/
+    ApplyDeltas();
 
+}
+
+thrust::device_vector<float> LayerConnector::GenerateActivationDelta(const thrust::device_vector<float>& output_layer){
+    thrust::device_vector<float> d_activation_delta = output_layer;
+    thrust::transform(d_activation_delta.begin(), d_activation_delta.end(), d_activation_delta.begin(), Activation::SigmoidDerivative());
+    return std::move(d_activation_delta);
+}
+
+void LayerConnector::ApplyDeltas(){
+    float learningrate = 1.0;
+    thrust::transform(d_delta_weights.begin(), d_delta_weights.end(), thrust::make_constant_iterator(learningrate), d_delta_weights.begin(), thrust::multiplies<float>());
+    thrust::transform(d_weights.begin(), d_weights.end(), d_delta_weights.begin(), d_weights.begin(), thrust::minus<float>());
+    thrust::transform(d_biases.begin(), d_biases.end(), d_delta_biases.begin(), d_biases.begin(), thrust::minus<float>());
 }
