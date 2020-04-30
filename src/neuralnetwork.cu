@@ -36,6 +36,12 @@ std::vector<float> NeuralNetwork::ForwardPropagate(std::vector<float>& input){
     return std::move(outvec);
 }
 
+void NeuralNetwork::TrainSingle(std::vector<float>& input, uint32_t correct){
+    for (int i = _layers.size()-1; i >= 0; i--){
+        _layers[i].CalculateGradient();
+    } 
+}
+
 void NeuralNetwork::Reset(){
     for (auto &layer : _layers)
         layer.InitalizeWithRandomValues();

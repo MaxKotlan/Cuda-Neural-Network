@@ -34,9 +34,11 @@ thrust::device_vector<float> LayerConnector::operator()(thrust::device_vector<fl
     return std::move(result);
 }
 
-thrust::device_vector<float> LayerConnector::CalculateOutputNeurons(thrust::device_vector<float>& d_input){    
+thrust::device_vector<float> LayerConnector::CalculateOutputNeurons(thrust::device_vector<float>& d_input_new){    
     cublasHandle_t handle;
     cublasCreate(&handle);
+
+    d_input = std::move(d_input_new);
 
     thrust::device_vector<float> d_output(outputsize);
     thrust::copy(d_biases.begin(), d_biases.end(), d_output.begin());
@@ -58,4 +60,12 @@ thrust::device_vector<float> LayerConnector::CalculateOutputNeurons(thrust::devi
     cublasDestroy(handle);
     thrust::transform(d_output.begin(), d_output.end(), d_output.begin(), Activation::Sigmoid());
     return std::move(d_output);
+}
+
+void LayerConnector::CalculateGradient(){
+    std::vector<float> input(d_input.size());
+    thrust::copy(d_input.begin(), d_input.end(), input.begin());
+    for (auto e : input){
+        std::cout << e << " ";
+    }
 }

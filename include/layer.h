@@ -15,10 +15,7 @@ class LayerConnector{
         thrust::device_vector<float> CalculateOutputNeurons(thrust::device_vector<float>& input);
         thrust::device_vector<float> operator() (thrust::device_vector<float>& neurons);
 
-        int size(){
-            std::cout << inputsize << "->" << outputsize << " : ";
-            return 0;
-        }
+        void CalculateGradient();
 
     public:
         uint32_t inputsize;
