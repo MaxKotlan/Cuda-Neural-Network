@@ -41,8 +41,6 @@ void LayerConnector::InitalizeWithRandomValues(){
 }
 
 thrust::device_vector<float> LayerConnector::operator()(thrust::device_vector<float> &d_input){
-    //previous * weights + bias
-    //testssgem();
     auto result = CalculateOutputNeurons(d_input);
     return std::move(result);
 }
@@ -105,8 +103,6 @@ void LayerConnector::CalculateGradient(thrust::device_vector<float>& d_cost){
         std::cout << e << " ";
     }
     std::cout << std::endl;*/
-    ApplyDeltas();
-
 }
 
 thrust::device_vector<float> LayerConnector::GenerateActivationDelta(const thrust::device_vector<float>& output_layer){
@@ -116,8 +112,12 @@ thrust::device_vector<float> LayerConnector::GenerateActivationDelta(const thrus
 }
 
 void LayerConnector::ApplyDeltas(){
+    /*Multiply Deltas by the learning rate*/
     float learningrate = 20.0;
     thrust::transform(d_delta_weights.begin(), d_delta_weights.end(), thrust::make_constant_iterator(learningrate), d_delta_weights.begin(), thrust::multiplies<float>());
+    thrust::transform(d_delta_biases.begin(), d_delta_biases.end(), thrust::make_constant_iterator(learningrate), d_delta_biases.begin(), thrust::multiplies<float>());
+
+    /*Apply deltas to weights and biases*/
     thrust::transform(d_weights.begin(), d_weights.end(), d_delta_weights.begin(), d_weights.begin(), thrust::minus<float>());
     thrust::transform(d_biases.begin(), d_biases.end(), d_delta_biases.begin(), d_biases.begin(), thrust::minus<float>());
 }
