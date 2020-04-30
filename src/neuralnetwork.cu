@@ -50,8 +50,6 @@ std::vector<float> NeuralNetwork::ForwardPropagate(std::vector<float>& input){
 void NeuralNetwork::TrainSingle(std::vector<float>& input, uint32_t correct){
     auto outputlayer = DeviceForwardPropagate(input);
 
-    /*Definetly making a custom transform for this*/
-
     std::cout << "Correct: " << correct;
 
     float correctvalue = 1.0;
@@ -64,9 +62,8 @@ void NeuralNetwork::TrainSingle(std::vector<float>& input, uint32_t correct){
     thrust::transform(cost.begin(), cost.end(), thrust::make_constant_iterator(2), cost.begin(), thrust::multiplies<float>());
     
     _layers[_layers.size()-1].SetOutputReference(&outputlayer);
-    for (int i = _layers.size()-1; i >= 0; i--){
+    for (int i = _layers.size()-1; i >= 0; i--)
         _layers[i].CalculateGradient(cost);
-    } 
 
     for (auto &layer : _layers)
         layer.ApplyDeltas();
