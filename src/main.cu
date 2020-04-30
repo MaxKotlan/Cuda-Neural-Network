@@ -39,7 +39,7 @@ int main(int argc, char** argv){
         auto result = mynn(image);
         for (auto e : result)
             std::cout << e << ", ";
-        mynn.Reset();
+        mynn.TrainSingle(image, t10klab.GetLabel(0));
         std::cout << std::endl;
     }
 }

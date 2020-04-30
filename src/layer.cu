@@ -65,7 +65,9 @@ thrust::device_vector<float> LayerConnector::CalculateOutputNeurons(thrust::devi
 void LayerConnector::CalculateGradient(){
     std::vector<float> input(d_input.size());
     thrust::copy(d_input.begin(), d_input.end(), input.begin());
+    std::cout << "Layer " << lay++ << ": ";
     for (auto e : input){
         std::cout << e << " ";
     }
+    std::cout << std::endl;
 }
