@@ -30,7 +30,7 @@ LayerConnector::LayerConnector(uint32_t inputsize, uint32_t outputsize, NeuralNe
 };
 
 void LayerConnector::InitalizeWithRandomValues(){
-    float max_range=1.0f;
+    float max_range=2.0f;
     for (float &bias : biases)
         bias = max_range*((float)rand() / (float)RAND_MAX)-max_range/2.0f;
 
