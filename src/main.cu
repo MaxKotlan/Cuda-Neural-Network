@@ -34,12 +34,15 @@ int main(int argc, char** argv){
     //    }
     //}
     auto image = t10k.GetImage(0).Normalize();
-    for (int i = 0; i < 10; i++){
-        std::cout << "Image " << i << ": Output Neurons: ";
+    uint32_t label = t10klab.GetLabel(0);
+    while (true){
+    //for (int i = 0; i < 1000; i++){
+        std::cout << "Image " << 0 << ": Output Neurons: ";
         auto result = mynn(image);
         for (auto e : result)
             std::cout << e << ", ";
-        mynn.Reset();
+        mynn.TrainSingle(image, label);
         std::cout << std::endl;
+    //}
     }
 }

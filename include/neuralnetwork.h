@@ -12,14 +12,16 @@ class NeuralNetwork{
     /*Forward Propogate Data*/
     std::vector<float> operator() (std::vector<float>& input);
     std::vector<float> ForwardPropagate(std::vector<float>& input);
+    thrust::device_vector<float> DeviceForwardPropagate(std::vector<float>& input);
 
     /*Cost of a single example*/
-    float SingleCost(std::vector<float>& input, uint32_t correct);
+    void TrainSingle(std::vector<float>& input, uint32_t correct);
 
     void Reset();
 
     private:
-        uint32_t _inputsize;
+        float  learning_rate;
+        uint32_t  _inputsize;
         uint32_t _outputsize;
         std::vector<LayerConnector> _layers;
 };
