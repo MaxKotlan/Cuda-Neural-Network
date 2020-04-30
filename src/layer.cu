@@ -30,7 +30,7 @@ LayerConnector::LayerConnector(uint32_t inputsize, uint32_t outputsize, NeuralNe
 };
 
 void LayerConnector::InitalizeWithRandomValues(){
-    float max_range=10.0f;
+    float max_range=1.0f;
     for (float &bias : biases)
         bias = max_range*((float)rand() / (float)RAND_MAX)-max_range/2.0f;
 
@@ -71,42 +71,22 @@ void LayerConnector::CalculateGradient(thrust::device_vector<float>& d_cost){
         ";
         exit(-1);
     }
-    
+
+    d_activation_delta = GenerateActivationDelta(*d_output_ref);
     if (_nextLayer == nullptr) {
-
-        d_activation_delta = GenerateActivationDelta(*d_output_ref);
         thrust::transform(d_activation_delta.begin(), d_activation_delta.end(), d_cost.begin(), d_activation_delta.begin(), thrust::multiplies<float>());
-
-        MatrixMultiply(
-            d_input.size(), 1, d_activation_delta.size(),
-            1.0, 0.0, 
-            d_input, d_activation_delta, d_delta_weights
-        );
-
-        thrust::transform(d_activation_delta.begin(), d_activation_delta.end(), d_biases.begin(), d_delta_biases.begin(), thrust::multiplies<float>());
-
     } else {
-
-        d_activation_delta = GenerateActivationDelta(*d_output_ref);
         thrust::device_vector<float> previous_layer_delta = CalculatePreviousLayerDelta();
         thrust::transform(d_activation_delta.begin(), d_activation_delta.end(), previous_layer_delta.begin(), d_activation_delta.begin(), thrust::multiplies<float>());
-
-        MatrixMultiply(
-            d_input.size(), 1, d_activation_delta.size(),
-            1.0, 0.0, 
-            d_input, d_activation_delta, d_delta_weights
-        );
-
-        thrust::transform(d_activation_delta.begin(), d_activation_delta.end(), d_biases.begin(), d_delta_biases.begin(), thrust::multiplies<float>());
-
     }
-    /*
-    thrust::copy(d_delta_weight.begin(), d_delta_weight.end(), weights.begin());
-    std::cout << std::endl << "Weights: " << std::endl;
-    for (auto e : weights){
-        std::cout << e << " ";
-    }
-    std::cout << std::endl;*/
+
+    MatrixMultiply(
+        d_input.size(), 1, d_activation_delta.size(),
+        1.0, 0.0, 
+        d_input, d_activation_delta, d_delta_weights
+    );
+
+    thrust::transform(d_activation_delta.begin(), d_activation_delta.end(), d_biases.begin(), d_delta_biases.begin(), thrust::multiplies<float>());
 }
 
 thrust::device_vector<float> LayerConnector::CalculatePreviousLayerDelta(){
@@ -141,7 +121,7 @@ thrust::device_vector<float> LayerConnector::GenerateActivationDelta(const thrus
 
 void LayerConnector::ApplyDeltas(){
     /*Multiply Deltas by the learning rate*/
-    float learningrate = 0.01;
+    float learningrate = 1.0;
     thrust::transform(d_delta_weights.begin(), d_delta_weights.end(), thrust::make_constant_iterator(learningrate), d_delta_weights.begin(), thrust::multiplies<float>());
     thrust::transform(d_delta_biases.begin(), d_delta_biases.end(), thrust::make_constant_iterator(learningrate), d_delta_biases.begin(), thrust::multiplies<float>());
 
