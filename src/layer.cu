@@ -66,7 +66,7 @@ void LayerConnector::CalculateGradient(thrust::device_vector<float>& d_cost){
     if (d_output_ref == nullptr){
         std::cerr << " \n\
         ERROR. You must set a reference to the input of the next layer to calculate the gradient.\n \
-        Please do this by calling SetOutputReference( [your layer].getInputReference() )\n \
+        Please do this by calling SetOutputReference( [pointer to device output vector] )\n \
         before you call CalculateGradient().\n \
         ";
         exit(-1);
@@ -74,8 +74,10 @@ void LayerConnector::CalculateGradient(thrust::device_vector<float>& d_cost){
 
     d_activation_delta = GenerateActivationDelta(*d_output_ref);
     if (_nextLayer == nullptr) {
+        /*If output layer use cost vector*/
         thrust::transform(d_activation_delta.begin(), d_activation_delta.end(), d_cost.begin(), d_activation_delta.begin(), thrust::multiplies<float>());
     } else {
+        /*otherwise use previous layer*/
         thrust::device_vector<float> previous_layer_delta = CalculatePreviousLayerDelta();
         thrust::transform(d_activation_delta.begin(), d_activation_delta.end(), previous_layer_delta.begin(), d_activation_delta.begin(), thrust::multiplies<float>());
     }
@@ -92,23 +94,11 @@ void LayerConnector::CalculateGradient(thrust::device_vector<float>& d_cost){
 thrust::device_vector<float> LayerConnector::CalculatePreviousLayerDelta(){
     thrust::device_vector<float> previous_layer_delta(outputsize);
 
-    /*Im not sure if this is correct*/
     MatrixMultiply(
         _nextLayer->inputsize, _nextLayer->outputsize, 1,
         1.0, 0.0, 
         _nextLayer->d_weights, _nextLayer->d_activation_delta, previous_layer_delta
     );
-
-    /*
-    for (int i = 0; i < inputsize; i++){
-        thrust::transform(
-            _nextLayer->d_weights.begin()+i*inputsize,
-            _nextLayer->d_weights.begin()+i*inputsize+outputsize,
-            _nextLayer->d_activation_delta, 
-            thrust::multiplies<float>()
-        );
-    }
-    thrust*/
 
     return std::move(previous_layer_delta);
 }
