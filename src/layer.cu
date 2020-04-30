@@ -76,15 +76,15 @@ void LayerConnector::CalculateGradient(thrust::device_vector<float>& d_cost){
     if (_nextLayer == nullptr) {
 
         thrust::device_vector<float> d_activation_delta = GenerateActivationDelta(*d_output_ref);
-        thrust::transform(d_activation_delta.begin(), d_activation_delta.end(), d_cost.begin(), d_cost.begin(), thrust::multiplies<float>());
+        thrust::transform(d_activation_delta.begin(), d_activation_delta.end(), d_cost.begin(), d_activation_delta.begin(), thrust::multiplies<float>());
 
         MatrixMultiply(
-            d_input.size(), 1, d_cost.size(),
+            d_input.size(), 1, d_activation_delta.size(),
             1.0, 0.0, 
-            d_input, d_cost, d_delta_weights
+            d_input, d_activation_delta, d_delta_weights
         );
 
-        thrust::transform(d_cost.begin(), d_cost.end(), d_biases.begin(), d_delta_biases.begin(), thrust::multiplies<float>());
+        thrust::transform(d_activation_delta.begin(), d_activation_delta.end(), d_biases.begin(), d_delta_biases.begin(), thrust::multiplies<float>());
 
     } else {
 
@@ -116,7 +116,7 @@ thrust::device_vector<float> LayerConnector::GenerateActivationDelta(const thrus
 }
 
 void LayerConnector::ApplyDeltas(){
-    float learningrate = 1.0;
+    float learningrate = 20.0;
     thrust::transform(d_delta_weights.begin(), d_delta_weights.end(), thrust::make_constant_iterator(learningrate), d_delta_weights.begin(), thrust::multiplies<float>());
     thrust::transform(d_weights.begin(), d_weights.end(), d_delta_weights.begin(), d_weights.begin(), thrust::minus<float>());
     thrust::transform(d_biases.begin(), d_biases.end(), d_delta_biases.begin(), d_biases.begin(), thrust::minus<float>());
