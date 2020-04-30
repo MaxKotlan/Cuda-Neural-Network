@@ -12,7 +12,8 @@ LayerConnector::LayerConnector(uint32_t inputsize, uint32_t outputsize):
     d_input(inputsize),
     d_output_ref(nullptr),
     d_weights(inputsize*outputsize),
-    d_biases(outputsize)
+    d_biases(outputsize),
+    _nextLayer(nullptr)
 {
     InitalizeWithRandomValues();
 };
@@ -63,6 +64,7 @@ void LayerConnector::CalculateGradient(thrust::device_vector<float>& d_cost){
     }
     
     thrust::device_vector<float> d_delta_weight(outputsize*inputsize);
+    thrust::device_vector<float> d_delta_bias(outputsize);
     thrust::device_vector<float> d_activation_delta(d_output_ref->size());
     d_activation_delta = *d_output_ref;
     thrust::transform(d_activation_delta.begin(), d_activation_delta.end(), d_activation_delta.begin(), Activation::SigmoidDerivative());

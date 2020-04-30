@@ -16,6 +16,7 @@ class LayerConnector{
         thrust::device_vector<float> operator() (thrust::device_vector<float>& neurons);
 
         void CalculateGradient(thrust::device_vector<float>& cost);
+        inline void SetNextLayerReference(LayerConnector* nextlayer_ref) { _nextLayer = nextlayer_ref; }
         inline void SetOutputReference(thrust::device_vector<float>* refoutput) { d_output_ref = refoutput; }
         inline thrust::device_vector<float>* GetInputReference() { return &d_input; };
 
@@ -28,6 +29,7 @@ class LayerConnector{
         thrust::device_vector<float>* d_output_ref; //refrence to output stored in next layer
         thrust::device_vector<float> d_weights;
         thrust::device_vector<float> d_biases;
+        LayerConnector* _nextLayer;
 };
 
 #endif
