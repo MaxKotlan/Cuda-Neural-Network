@@ -68,9 +68,8 @@ void NeuralNetwork::TrainSingle(std::vector<float>& input, uint32_t correct){
         _layers[i].CalculateGradient(cost);
     } 
 
-    for (auto &layer : _layers){
+    for (auto &layer : _layers)
         layer.ApplyDeltas();
-    }
 }
 
 void NeuralNetwork::Reset(){

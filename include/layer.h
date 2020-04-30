@@ -23,6 +23,7 @@ class LayerConnector{
         inline thrust::device_vector<float>* GetInputReference() { return &d_input; };
 
         thrust::device_vector<float> GenerateActivationDelta(const thrust::device_vector<float>& output_layer);
+        thrust::device_vector<float> CalculatePreviousLayerDelta();
         void ApplyDeltas();
 
     protected:
@@ -36,7 +37,8 @@ class LayerConnector{
         thrust::device_vector<float> d_biases;
         thrust::device_vector<float> d_delta_weights;
         thrust::device_vector<float> d_delta_biases;
-        
+        thrust::device_vector<float> d_activation_delta;
+
         LayerConnector* _nextLayer;
         NeuralNetwork*  _neuralnetwork;
 };

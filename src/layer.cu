@@ -16,7 +16,8 @@ LayerConnector::LayerConnector(uint32_t inputsize, uint32_t outputsize, NeuralNe
     _nextLayer(nullptr),
     _neuralnetwork(network),
     d_delta_weights(outputsize*inputsize),
-    d_delta_biases(outputsize)
+    d_delta_biases(outputsize),
+    d_activation_delta(outputsize)
 {
     if (network == nullptr){
         std::cerr << " \n\
@@ -73,7 +74,7 @@ void LayerConnector::CalculateGradient(thrust::device_vector<float>& d_cost){
     
     if (_nextLayer == nullptr) {
 
-        thrust::device_vector<float> d_activation_delta = GenerateActivationDelta(*d_output_ref);
+        d_activation_delta = GenerateActivationDelta(*d_output_ref);
         thrust::transform(d_activation_delta.begin(), d_activation_delta.end(), d_cost.begin(), d_activation_delta.begin(), thrust::multiplies<float>());
 
         MatrixMultiply(
@@ -86,7 +87,10 @@ void LayerConnector::CalculateGradient(thrust::device_vector<float>& d_cost){
 
     } else {
 
-        thrust::device_vector<float> d_activation_delta = GenerateActivationDelta(*d_output_ref);
+        d_activation_delta = GenerateActivationDelta(*d_output_ref);
+        thrust::device_vector<float> previous_layer_delta = CalculatePreviousLayerDelta();
+        thrust::transform(d_activation_delta.begin(), d_activation_delta.end(), previous_layer_delta.begin(), d_activation_delta.begin(), thrust::multiplies<float>());
+
         MatrixMultiply(
             d_input.size(), 1, d_activation_delta.size(),
             1.0, 0.0, 
@@ -105,6 +109,19 @@ void LayerConnector::CalculateGradient(thrust::device_vector<float>& d_cost){
     std::cout << std::endl;*/
 }
 
+thrust::device_vector<float> LayerConnector::CalculatePreviousLayerDelta(){
+    thrust::device_vector<float> previous_layer_delta(inputsize);
+
+    /*This isnt doing what I want it to do*/
+    MatrixMultiply(
+        _nextLayer->inputsize, _nextLayer->outputsize, 1,
+        1.0, 0.0, 
+        _nextLayer->d_weights, _nextLayer->d_activation_delta, previous_layer_delta
+    );
+
+    return std::move(previous_layer_delta);
+}
+
 thrust::device_vector<float> LayerConnector::GenerateActivationDelta(const thrust::device_vector<float>& output_layer){
     thrust::device_vector<float> d_activation_delta = output_layer;
     thrust::transform(d_activation_delta.begin(), d_activation_delta.end(), d_activation_delta.begin(), Activation::SigmoidDerivative());
@@ -113,7 +130,7 @@ thrust::device_vector<float> LayerConnector::GenerateActivationDelta(const thrus
 
 void LayerConnector::ApplyDeltas(){
     /*Multiply Deltas by the learning rate*/
-    float learningrate = 20.0;
+    float learningrate = 1.0;
     thrust::transform(d_delta_weights.begin(), d_delta_weights.end(), thrust::make_constant_iterator(learningrate), d_delta_weights.begin(), thrust::multiplies<float>());
     thrust::transform(d_delta_biases.begin(), d_delta_biases.end(), thrust::make_constant_iterator(learningrate), d_delta_biases.begin(), thrust::multiplies<float>());
 
