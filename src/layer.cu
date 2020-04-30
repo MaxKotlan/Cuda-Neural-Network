@@ -4,7 +4,7 @@
 #include "activation.h"
 #include "matrix.h"
 
-LayerConnector::LayerConnector(uint32_t inputsize, uint32_t outputsize):
+LayerConnector::LayerConnector(uint32_t inputsize, uint32_t outputsize, NeuralNetwork* network=nullptr):
     inputsize(inputsize),
     outputsize(outputsize),
     biases(outputsize), 
@@ -13,8 +13,16 @@ LayerConnector::LayerConnector(uint32_t inputsize, uint32_t outputsize):
     d_output_ref(nullptr),
     d_weights(inputsize*outputsize),
     d_biases(outputsize),
-    _nextLayer(nullptr)
+    _nextLayer(nullptr),
+    _neuralnetwork(network)
 {
+    if (network == nullptr){
+        std::cerr << " \n\
+        ERROR. You must set a reference to the neural network, \
+        so that the layer can retrive global parameters such as the learning rate. \
+        ";
+        exit(-1);
+    }
     InitalizeWithRandomValues();
 };
 

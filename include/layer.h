@@ -5,11 +5,13 @@
 #include <iostream>
 #include <thrust/device_vector.h>
 
+class NeuralNetwork;
+
 class LayerConnector{
 
     public:
         LayerConnector(){};
-        LayerConnector(uint32_t inputsize, uint32_t outputsize);
+        LayerConnector(uint32_t inputsize, uint32_t outputsize, NeuralNetwork* network);
 
         void InitalizeWithRandomValues();
         thrust::device_vector<float> CalculateOutputNeurons(thrust::device_vector<float>& input);
@@ -30,6 +32,7 @@ class LayerConnector{
         thrust::device_vector<float> d_weights;
         thrust::device_vector<float> d_biases;
         LayerConnector* _nextLayer;
+        NeuralNetwork*  _neuralnetwork;
 };
 
 #endif

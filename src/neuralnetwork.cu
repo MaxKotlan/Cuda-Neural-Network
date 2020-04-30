@@ -11,13 +11,13 @@ _layers(1+hiddenlayercount)
     DEBUG("NEURALNETWORK: Initalizing with inputsize:" << inputsize << ", hiddenlayersize: " << hiddenlayersize 
     << ", hiddenlayercount: " << hiddenlayercount << ", outputsize: " << outputsize << std::endl);
     DEBUG("LAYERCONNECTOR 0: Initilizing layer connector " << inputsize << " => " << hiddenlayersize << std::endl);
-    _layers[0] = LayerConnector(inputsize, hiddenlayersize);
+    _layers[0] = LayerConnector(inputsize, hiddenlayersize, this);
     for (int i = 1; i < hiddenlayercount; i++){
         DEBUG("LAYERCONNECTOR " <<i<<": Initilizing layer connector " << hiddenlayersize << " => " << hiddenlayersize << std::endl);
-        _layers[i] = LayerConnector(hiddenlayersize, hiddenlayersize);
+        _layers[i] = LayerConnector(hiddenlayersize, hiddenlayersize, this);
     }
     DEBUG("LAYERCONNECTOR " <<hiddenlayercount<<": Initilizing layer connector " << hiddenlayersize << " => " << outputsize << std::endl);
-    _layers[hiddenlayercount] = LayerConnector(hiddenlayersize, outputsize);
+    _layers[hiddenlayercount] = LayerConnector(hiddenlayersize, outputsize, this);
 
     /*Set references to next layer/output*/
     for (int i = 0; i < _layers.size()-1; i++){
