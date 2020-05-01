@@ -11,8 +11,8 @@ void MatrixMultiply(
     thrust::device_vector<float>& mat_c
 ){
     DEBUG("MULTIPLYING " << m << "x" << n << " * " << n << "x" << k << " Parameters: Alpha: " << alpha << " Beta: " << beta << std::endl);
-    cublasHandle_t handle;
-    cublasCreate(&handle);
+    static cublasHandle_t handle = nullptr;
+    if (handle == nullptr) cublasCreate(&handle);
     cublasSgemm(   
         handle, CUBLAS_OP_N, CUBLAS_OP_N, 
         n, m, k, 
@@ -22,5 +22,4 @@ void MatrixMultiply(
         &beta,
         thrust::raw_pointer_cast(mat_c.data()), n
     );
-    cublasDestroy(handle);
 }
