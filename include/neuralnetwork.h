@@ -7,7 +7,7 @@
 class NeuralNetwork{
     public:
 
-    NeuralNetwork(uint32_t inputsize, uint32_t hiddenlayersize, uint32_t hiddenlayercount, uint32_t outputsize );
+    NeuralNetwork(uint32_t inputsize, uint32_t hiddenlayersize, uint32_t hiddenlayercount, uint32_t outputsize, float learningrate=1.0);
 
     /*Forward Propogate Data*/
     std::vector<float> operator() (std::vector<float>& input);
@@ -16,12 +16,15 @@ class NeuralNetwork{
 
     /*Cost of a single example*/
     void TrainSingle(std::vector<float>& input, uint32_t correct);
-
     void Reset();
 
+    inline float getLearningRate()  { return  _learning_rate;};
+    inline uint32_t getTrainingCount() { return _training_count;};
+
     private:
-        float  learning_rate;
-        uint32_t  _inputsize;
+        float _learning_rate;
+        uint32_t _training_count; 
+        uint32_t _inputsize;
         uint32_t _outputsize;
         std::vector<LayerConnector> _layers;
 };

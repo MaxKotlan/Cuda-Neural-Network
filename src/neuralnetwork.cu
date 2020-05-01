@@ -4,9 +4,9 @@
 #include <math.h>
 #include "debug.h"
 
-NeuralNetwork::NeuralNetwork(uint32_t inputsize, uint32_t hiddenlayersize, uint32_t hiddenlayercount, uint32_t outputsize) 
+NeuralNetwork::NeuralNetwork(uint32_t inputsize, uint32_t hiddenlayersize, uint32_t hiddenlayercount, uint32_t outputsize, float learningrate) 
 : _inputsize(inputsize), _outputsize(outputsize),
-_layers(1+hiddenlayercount)
+_layers(1+hiddenlayercount), _learning_rate(learningrate), _training_count(0)
 {
     DEBUG("NEURALNETWORK: Initalizing with inputsize:" << inputsize << ", hiddenlayersize: " << hiddenlayersize 
     << ", hiddenlayercount: " << hiddenlayercount << ", outputsize: " << outputsize << std::endl);
@@ -48,9 +48,9 @@ std::vector<float> NeuralNetwork::ForwardPropagate(std::vector<float>& input){
 }
 
 void NeuralNetwork::TrainSingle(std::vector<float>& input, uint32_t correct){
-    auto outputlayer = DeviceForwardPropagate(input);
+    _training_count++;
 
-    std::cout << "Correct: " << correct;
+    auto outputlayer = DeviceForwardPropagate(input);
 
     float correctvalue = 1.0;
     float incorrectvalue = 0.0;

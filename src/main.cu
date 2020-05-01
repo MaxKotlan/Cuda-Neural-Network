@@ -23,8 +23,8 @@ int main(int argc, char** argv){
     }*/
 
     srand(132);
-    NeuralNetwork mynn(28*28, 16, 2, 10);
-    std::cout << std::fixed << std::setprecision(2);
+    NeuralNetwork mynn(28*28, 16, 2, 10, 1.0);
+    std::cout << std::fixed << std::setprecision(6);
     //for (auto layer : mynn._layers){
     //    for (int j = 0; j < layer.outputsize; j++){
     //        std::cout << "[ ";
@@ -33,16 +33,20 @@ int main(int argc, char** argv){
     //        std::cout << " ][ " << "?" << " ] + [ " << layer.biases[j] << "]" << std::endl;
     //    }
     //}
-    auto image = t10k.GetImage(0).Normalize();
-    uint32_t label = t10klab.GetLabel(0);
+
+    int count = 0;
     while (true){
+        auto image = t10k.GetImage(0).Normalize();
+        uint32_t label = t10klab.GetLabel(0);    
     //for (int i = 0; i < 1000; i++){
         std::cout << "Image " << 0 << ": Output Neurons: ";
         auto result = mynn(image);
+        std::cout << "Correct: " << label << " ";
         for (auto e : result)
             std::cout << e << ", ";
         mynn.TrainSingle(image, label);
         std::cout << std::endl;
+        count++;
     //}
     }
 }
