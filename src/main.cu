@@ -26,7 +26,7 @@ int main(int argc, char** argv){
 
     srand(132);
     NeuralNetwork mynn(28*28, 16, 2, 10, 1.0);
-    std::cout << std::hex<< std::setfill('0') << std::setw(2);///<< std::fixed << std::setprecision(6);
+    std::cout << std::fixed << std::setprecision(2);
     //for (auto layer : mynn._layers){
     //    for (int j = 0; j < layer.outputsize; j++){
     //        std::cout << "[ ";
@@ -37,12 +37,12 @@ int main(int argc, char** argv){
     //}
     
     for (int i = 0; i < 1000; i++){
-        thrust::device_vector<unsigned char> image = t10k.GetImage(i).Normalize();
-        std::vector<unsigned char> image_norm(image.size());
+        thrust::device_vector<float> image = t10k.GetImage(i).Normalize();
+        std::vector<float> image_norm(image.size());
         thrust::copy(image.begin(), image.end(), image_norm.begin());
         for (int ch = 0; ch < image_norm.size(); ch++){
             if (ch%28 == 0) std::cout << std::endl;
-            std::cout << std::hex<< std::setfill('0') << std::setw(2) << (int)image_norm[ch];
+            std::cout << image_norm[ch];
         }
     }
 
