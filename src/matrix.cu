@@ -3,7 +3,7 @@
 
 /*Tricks Cublas into Performing Row Major Order Matrix Multiplication using Matrix Transposes*/
 void MatrixMultiply(
-    int m, int k, int n,
+    uint32_t m, uint32_t k, uint32_t n,
     float alpha, float beta,
     thrust::device_vector<float>& mat_a, 
     thrust::device_vector<float>& mat_b,

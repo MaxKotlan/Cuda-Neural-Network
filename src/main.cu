@@ -28,14 +28,14 @@ int main(int argc, char** argv){
     NeuralNetwork mynn(28*28, 16, 2, 10, 1.0);
     std::cout << std::fixed << std::setprecision(2);
 
-    uint32_t pollingrate = 10;
+    uint32_t pollingrate = 1;
     uint32_t count = 0;
     auto image = t10k.GetImage(0).Normalize();
     uint32_t label = t10klab.GetLabel(0);    
     while (true){
-        auto device_result = mynn.ForwardPropagate(image);
 
         if (count%pollingrate == 0){
+            auto device_result = mynn.ForwardPropagate(image);
             std::vector<float> result(device_result.size());
             thrust::copy(device_result.begin(), device_result.end(), result.begin());
             for (auto e : result)
