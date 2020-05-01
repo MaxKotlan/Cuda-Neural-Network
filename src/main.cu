@@ -37,11 +37,11 @@ int main(int argc, char** argv){
 
     int count = 0;
     while (true){
-        auto image = t10k.GetImage(0).Normalize();
+        thrust::device_vector<float> image = t10k.GetImage(0).Normalize();
         uint32_t label = t10klab.GetLabel(0);    
     //for (int i = 0; i < 1000; i++){
         std::cout << "Image " << 0 << ": Output Neurons: ";
-        auto result = mynn(image);
+        thrust::device_vector<float> result = mynn(image);
         std::cout << "Correct: " << label << " ";
         for (auto e : result)
             std::cout << e << ", ";
