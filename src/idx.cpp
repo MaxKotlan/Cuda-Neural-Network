@@ -68,9 +68,9 @@ namespace IDX
 
     void Database::CopyRawData(unsigned int bytes){
         DEBUG(filename << ": Copying Raw Data Into Memory" << std::endl);
-        raw_data.reserve(bytes);
+        raw_data.resize(bytes);
         fread(raw_data.data(), bytes, 1, database);
-        DEBUG(filename << ": Finished Copying Raw Data Into Memory" << std::endl);
+        DEBUG(filename << ": Finished Copying Raw Data (" << raw_data.size() << " BYTES) Into Memory" << std::endl);
     }
 
 

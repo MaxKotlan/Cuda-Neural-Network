@@ -31,6 +31,11 @@ std::vector<float> NeuralNetwork::operator() (std::vector<float>& in){
     return std::move(ForwardPropagate(in));
 }
 
+thrust::device_vector<float> operator()(thrust::device_vector<float>& input){
+    return std::move(DeviceForwardPropagate(in));
+}
+
+
 thrust::device_vector<float> NeuralNetwork::DeviceForwardPropagate(std::vector<float>& input){
     thrust::device_vector<float> d_input = input;
     for (auto &layer : _layers)

@@ -1,16 +1,17 @@
 #include <iostream>
 #include <vector>
 #include  <iomanip>
-#include "idx.h"
+#include "idx-cuda.h"
 #include "neuralnetwork.h"
 
 int main(int argc, char** argv){
     
-    IDX::ImageDatabase t10k("../data/t10k-images.idx3-ubyte");
-    IDX::LabelDatabase t10klab("../data/t10k-labels.idx1-ubyte");
-    IDX::ImageDatabase t10ktrain("../data/train-images.idx3-ubyte");
-    IDX::LabelDatabase t10ktrainlab("../data/train-labels.idx1-ubyte");
-
+    IDX::CudaImageDatabase t10k("../data/t10k-images.idx3-ubyte");
+    IDX::LabelDatabase     t10klab("../data/t10k-labels.idx1-ubyte");
+    IDX::CudaImageDatabase t10ktrain("../data/train-images.idx3-ubyte");
+    IDX::LabelDatabase     t10ktrainlab("../data/train-labels.idx1-ubyte");
+    //std::cout << "TESTTING TESTING";
+    //IDX::CudaImageDatabase testDB("../data/train-images.idx3-ubyte");
     /*
     for (int k = 0; k < 2; k++){
         Image image_data = t10k.GetImage(k);
