@@ -32,7 +32,7 @@ namespace IDX{
             std::vector<unsigned char> raw_data;  
     };
 
-    class ImageDatabase : Database{
+    class ImageDatabase : protected Database{
         
         public:
 
@@ -45,7 +45,7 @@ namespace IDX{
             uint32_t image_y;
     };
 
-    class LabelDatabase : Database {
+    class LabelDatabase : protected Database {
         public:
 
         LabelDatabase(std::string filename);
