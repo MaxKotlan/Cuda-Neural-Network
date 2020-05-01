@@ -8,7 +8,7 @@ namespace IDX{
     class CudaImageDatabase : public ImageDatabase {
         public:
             CudaImageDatabase(std::string filename);
-            CudaImage CudaImageDatabase::GetImage(unsigned int index);
+            CudaImage GetImage(unsigned int index);
             
         protected:
             thrust::device_vector<unsigned char> device_raw_data;  
