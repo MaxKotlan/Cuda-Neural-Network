@@ -16,6 +16,7 @@ class NeuralNetwork{
     std::vector<float> ForwardPropagate(std::vector<float>& input);
 
     /*Cost of a single example*/
+    void TrainSingle(std::vector<float>& input, uint32_t correct);
     void TrainSingle(thrust::device_vector<float>& input, uint32_t correct);
     void Reset();
 

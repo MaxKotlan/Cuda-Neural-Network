@@ -54,6 +54,11 @@ std::vector<float> NeuralNetwork::ForwardPropagate(std::vector<float>& input){
     return std::move(outvec);
 }
 
+void NeuralNetwork::TrainSingle(std::vector<float>& input, uint32_t correct){
+    thrust::device_vector<float> d_input = input;
+    TrainSingle(d_input, correct);
+}
+
 void NeuralNetwork::TrainSingle(thrust::device_vector<float>& input, uint32_t correct){
     _training_count++;
 

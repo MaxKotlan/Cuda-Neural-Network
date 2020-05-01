@@ -39,6 +39,8 @@ namespace IDX{
         ImageDatabase(std::string filename);
         Image GetImage(unsigned int index);
 
+        inline uint32_t size() { return image_count; } 
+
         protected:
             uint32_t image_count;
             uint32_t image_x;
