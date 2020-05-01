@@ -40,6 +40,8 @@ namespace IDX{
         Image GetImage(unsigned int index);
 
         inline uint32_t size() { return image_count; } 
+        inline uint32_t x()    { return image_x; } 
+        inline uint32_t y()    { return image_y; } 
 
         protected:
             uint32_t image_count;

@@ -21,7 +21,7 @@ class Image{
 
         Image(uint32_t x, uint32_t y, unsigned char* beginaddr) : _x(x), _y(y), begin(beginaddr) { };
 
-    protected:
+    public:
         uint32_t _x;
         uint32_t _y;
         unsigned char* begin;

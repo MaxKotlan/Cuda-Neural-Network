@@ -7,35 +7,39 @@
 
 int main(int argc, char** argv){
     
-    IDX::CudaImageDatabase t10k("../data/t10k-images.idx3-ubyte");
-    IDX::LabelDatabase     t10klab("../data/t10k-labels.idx1-ubyte");
-    IDX::CudaImageDatabase t10ktrain("../data/train-images.idx3-ubyte");
-    IDX::LabelDatabase     t10ktrainlab("../data/train-labels.idx1-ubyte");
-    //std::cout << "TESTTING TESTING";
-    //IDX::CudaImageDatabase testDB("../data/train-images.idx3-ubyte");
-    /*
-    for (int k = 0; k < 2; k++){
-        Image image_data = t10k.GetImage(k);
-        std::cout << std::endl << std::endl << "This image is a " << t10klab.GetLabel(k) << std::endl;
-        auto normalized = image_data.Normalize();
-        for (int i = 0; i < image_data.size(); i++){
-            if (i%image_data.x()==0) std::cout << std::endl;
-            std::cout << /*std::fixed << std::setprecision(2) <<*/ /* std::hex<< std::setfill('0') << std::setw(2) <<*//* image_data[i];
-        }
-    }*/
+    IDX::ImageDatabase t10k("../data/t10k-images.idx3-ubyte");
+    IDX::LabelDatabase t10klab("../data/t10k-labels.idx1-ubyte");
+    IDX::ImageDatabase t10ktrain("../data/train-images.idx3-ubyte");
+    IDX::LabelDatabase t10ktrainlab("../data/train-labels.idx1-ubyte");
 
     srand(132);
-    NeuralNetwork mynn(28*28, 16, 2, 10, 0.1);
-    std::cout << std::fixed << std::setprecision(2);
+    NeuralNetwork mynn(t10k.x()*t10k.y(), 16, 20, 10, 0.7);
 
     uint32_t imageindex;
     std::cout << " Enter Image Index: ";
     std::cin >> imageindex;
 
-    uint32_t pollingrate = 15;
-    uint32_t count = 0;
-    auto image = t10k.GetImage(imageindex).Normalize();
+    auto image_raw = t10k.GetImage(imageindex);
+    auto image = image_raw.Normalize();
     uint32_t label = t10klab.GetLabel(imageindex);    
+
+    //IDX::ImageDatabase     t10ktrain_reg("../data/train-images.idx3-ubyte");
+    //auto image_raw_host = t10k.GetImage(imageindex);
+    for(int i = 0; i < image_raw.size(); i++){
+        if (i%28 == 0) std::cout << std::endl;
+        uint32_t el = (uint32_t)image_raw[i];
+        if (el != 0)
+        std::cout << std::setfill('0') << std::setw(2) << std::hex  << el;
+        else
+            std::cout << "  ";
+    }
+    std::cout << std::endl;
+
+    std::cout << std::fixed << std::setprecision(2);
+
+    std::cout << std::dec;
+    uint32_t pollingrate = 1;
+    uint32_t count = 0;
     while (true){
 
         if (count%pollingrate == 0){
