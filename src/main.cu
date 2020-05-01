@@ -36,6 +36,7 @@ int main(int argc, char** argv){
     //    }
     //}
     
+    /*
     for (int i = 0; i < 1000; i++){
         thrust::device_vector<float> image = t10k.GetImage(i).Normalize();
         std::vector<float> image_norm(image.size());
@@ -44,22 +45,21 @@ int main(int argc, char** argv){
             if (ch%28 == 0) std::cout << std::endl;
             std::cout << image_norm[ch];
         }
-    }
+    }*/
 
-    /*
+    
     int count = 0;
     while (true){
-        thrust::device_vector<float> image = t10k.GetImage(0).Normalize();
+        thrust::device_vector<float> image = t10k.GetImage(count).Normalize();
+        
         uint32_t label = t10klab.GetLabel(0);    
     //for (int i = 0; i < 1000; i++){
-        std::cout << "Image " << 0 << ": Output Neurons: ";
-        thrust::device_vector<float> result = mynn(image);
-        std::cout << "Correct: " << label << " ";
-        for (auto e : sresult)
-            std::cout << e << ", ";
+       //std::cout << "Image " << 0 << ": Output Neurons: ";
+        thrust::device_vector<float> result = mynn.ForwardPropagate(image);
+        //std::cout << "Correct: " << label << " ";
         mynn.TrainSingle(image, label);
-        std::cout << std::endl;
+        //std::cout << std::endl;
         count++;
-    //}
-    }*/
+    //}*/
+    }
 }

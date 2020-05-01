@@ -27,36 +27,37 @@ _layers(1+hiddenlayercount), _learning_rate(learningrate), _training_count(0)
 
 }
 
-std::vector<float> NeuralNetwork::operator() (std::vector<float>& input){
+thrust::device_vector<float> NeuralNetwork::operator() (thrust::device_vector<float>& input){
     return std::move(ForwardPropagate(input));
 }
 
-/*
-thrust::device_vector<float> NeuralNetwork::operator()(const thrust::device_vector<float>& input){
-    return std::move(DeviceForwardPropagate(input));
-}*/
 
-
-thrust::device_vector<float> NeuralNetwork::DeviceForwardPropagate(std::vector<float>& input){
+std::vector<float> NeuralNetwork::operator()(std::vector<float>& input){
     thrust::device_vector<float> d_input = input;
+    d_input = ForwardPropagate(d_input);
+    std::vector<float> result(d_input.size());
+    thrust::copy(d_input.begin(), d_input.end(), result.begin());
+    return std::move(result);
+}
+
+thrust::device_vector<float> NeuralNetwork::ForwardPropagate(thrust::device_vector<float>& d_input){
     for (auto &layer : _layers)
         d_input = layer(d_input);
     return std::move(d_input);
 }
 
-
 std::vector<float> NeuralNetwork::ForwardPropagate(std::vector<float>& input){
     thrust::device_vector<float> d_input = input;
-    d_input = DeviceForwardPropagate(input);
+    d_input = ForwardPropagate(d_input);
     std::vector<float> outvec(d_input.size());
     thrust::copy(d_input.begin(), d_input.end(), outvec.begin());
     return std::move(outvec);
 }
 
-void NeuralNetwork::TrainSingle(std::vector<float>& input, uint32_t correct){
+void NeuralNetwork::TrainSingle(thrust::device_vector<float>& input, uint32_t correct){
     _training_count++;
 
-    auto outputlayer = DeviceForwardPropagate(input);
+    auto outputlayer = ForwardPropagate(input);
 
     float correctvalue = 1.0;
     float incorrectvalue = 0.0;

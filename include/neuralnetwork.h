@@ -10,13 +10,13 @@ class NeuralNetwork{
     NeuralNetwork(uint32_t inputsize, uint32_t hiddenlayersize, uint32_t hiddenlayercount, uint32_t outputsize, float learningrate=1.0);
 
     /*Forward Propogate Data*/
-    //thrust::device_vector<float> operator()(const thrust::device_vector<float>& input);
-    thrust::device_vector<float> DeviceForwardPropagate(std::vector<float>& input);
+    thrust::device_vector<float> operator()(thrust::device_vector<float>& input);
+    thrust::device_vector<float> ForwardPropagate(thrust::device_vector<float>& input);
     std::vector<float> operator() (std::vector<float>& input);
     std::vector<float> ForwardPropagate(std::vector<float>& input);
 
     /*Cost of a single example*/
-    void TrainSingle(std::vector<float>& input, uint32_t correct);
+    void TrainSingle(thrust::device_vector<float>& input, uint32_t correct);
     void Reset();
 
     inline float getLearningRate()  { return  _learning_rate;};
