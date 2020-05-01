@@ -3,6 +3,7 @@
 #include  <iomanip>
 #include "idx-cuda.h"
 #include "neuralnetwork.h"
+#include <thrust/device_vector.h>
 
 int main(int argc, char** argv){
     
@@ -34,7 +35,16 @@ int main(int argc, char** argv){
     //        std::cout << " ][ " << "?" << " ] + [ " << layer.biases[j] << "]" << std::endl;
     //    }
     //}
+    
 
+    thrust::device_vector<unsigned char> image = t10k.GetImage(0).Normalize();
+    std::vector<unsigned char> image_norm(image.size());
+    thrust::copy(image.begin(), image.end(), image_norm.begin());
+    for (auto ch : image_norm){
+        std::cout << (int)ch;
+    }
+
+    /*
     int count = 0;
     while (true){
         thrust::device_vector<float> image = t10k.GetImage(0).Normalize();
@@ -43,11 +53,11 @@ int main(int argc, char** argv){
         std::cout << "Image " << 0 << ": Output Neurons: ";
         thrust::device_vector<float> result = mynn(image);
         std::cout << "Correct: " << label << " ";
-        for (auto e : result)
+        for (auto e : sresult)
             std::cout << e << ", ";
         mynn.TrainSingle(image, label);
         std::cout << std::endl;
         count++;
     //}
-    }
+    }*/
 }

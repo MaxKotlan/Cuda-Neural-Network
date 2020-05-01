@@ -27,13 +27,14 @@ _layers(1+hiddenlayercount), _learning_rate(learningrate), _training_count(0)
 
 }
 
-std::vector<float> NeuralNetwork::operator() (std::vector<float>& in){
-    return std::move(ForwardPropagate(in));
+std::vector<float> NeuralNetwork::operator() (std::vector<float>& input){
+    return std::move(ForwardPropagate(input));
 }
 
-thrust::device_vector<float> operator()(thrust::device_vector<float>& input){
-    return std::move(DeviceForwardPropagate(in));
-}
+/*
+thrust::device_vector<float> NeuralNetwork::operator()(const thrust::device_vector<float>& input){
+    return std::move(DeviceForwardPropagate(input));
+}*/
 
 
 thrust::device_vector<float> NeuralNetwork::DeviceForwardPropagate(std::vector<float>& input){
