@@ -25,19 +25,24 @@ int main(int argc, char** argv){
     }*/
 
     srand(132);
-    NeuralNetwork mynn(28*28, 16, 2, 10, 1.0);
+    NeuralNetwork mynn(28*28, 16, 2, 10, 0.1);
     std::cout << std::fixed << std::setprecision(2);
 
-    uint32_t pollingrate = 1;
+    uint32_t imageindex;
+    std::cout << " Enter Image Index: ";
+    std::cin >> imageindex;
+
+    uint32_t pollingrate = 15;
     uint32_t count = 0;
-    auto image = t10k.GetImage(0).Normalize();
-    uint32_t label = t10klab.GetLabel(0);    
+    auto image = t10k.GetImage(imageindex).Normalize();
+    uint32_t label = t10klab.GetLabel(imageindex);    
     while (true){
 
         if (count%pollingrate == 0){
             auto device_result = mynn.ForwardPropagate(image);
             std::vector<float> result(device_result.size());
             thrust::copy(device_result.begin(), device_result.end(), result.begin());
+            std::cout << "training iteration: " << count << " should be: " << label << " Probabilities: ";
             for (auto e : result)
                 std::cout << e << " ";
             std::cout << std::endl;

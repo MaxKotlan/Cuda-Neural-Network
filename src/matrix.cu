@@ -10,8 +10,7 @@ void MatrixMultiply(
     thrust::device_vector<float>& mat_b,
     thrust::device_vector<float>& mat_c
 ){
-    DEBUG("MULTIPLYING " << m << "x" << n << " * " << n << "x" << k << std::endl);
-    DEBUG("Alpha: " << alpha << " Beta: " << beta << std::endl);
+    DEBUG("MULTIPLYING " << m << "x" << n << " * " << n << "x" << k << " Parameters: Alpha: " << alpha << " Beta: " << beta << std::endl);
     cublasHandle_t handle;
     cublasCreate(&handle);
     cublasSgemm(   
