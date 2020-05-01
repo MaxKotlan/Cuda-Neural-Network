@@ -13,7 +13,7 @@ int main(int argc, char** argv){
     IDX::LabelDatabase t10ktrainlab("../data/train-labels.idx1-ubyte");
 
     srand(132);
-    NeuralNetwork mynn(t10k.x()*t10k.y(), 16, 20, 10, 0.7);
+    NeuralNetwork mynn(t10k.x()*t10k.y(), 16, 20, 10, 1.0);
 
     uint32_t imageindex;
     std::cout << " Enter Image Index: ";
@@ -48,7 +48,16 @@ int main(int argc, char** argv){
             thrust::copy(device_result.begin(), device_result.end(), result.begin());
             std::cout << "training iteration: " << count << " should be: " << label << " Probabilities: ";
             for (auto e : result)
-                std::cout << e << " ";
+                std::cout << std::fixed << std::setprecision(2) << e << " ";
+
+            float total = 0;
+            for (uint32_t i = 0; i < result.size(); i++){
+                float difference = 0.0;
+                if (i == label) difference = 1.0;
+                total += ((result[i] - difference) * (result[i] - difference) );
+            }
+            total = total / 10.0;
+            std::cout << std::fixed << std::setprecision(6) << " error: " << total;
             std::cout << std::endl;
         }
 
