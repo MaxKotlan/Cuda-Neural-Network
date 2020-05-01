@@ -7,9 +7,9 @@
 
 int main(int argc, char** argv){
     
-    IDX::ImageDatabase t10k("../data/t10k-images.idx3-ubyte");
+    IDX::CudaImageDatabase t10k("../data/t10k-images.idx3-ubyte");
     IDX::LabelDatabase t10klab("../data/t10k-labels.idx1-ubyte");
-    IDX::ImageDatabase t10ktrain("../data/train-images.idx3-ubyte");
+    IDX::CudaImageDatabase t10ktrain("../data/train-images.idx3-ubyte");
     IDX::LabelDatabase t10ktrainlab("../data/train-labels.idx1-ubyte");
 
     srand(132);
@@ -25,7 +25,7 @@ int main(int argc, char** argv){
 
     //IDX::ImageDatabase     t10ktrain_reg("../data/train-images.idx3-ubyte");
     //auto image_raw_host = t10k.GetImage(imageindex);
-    for(int i = 0; i < image_raw.size(); i++){
+    /*for(int i = 0; i < image_raw.size(); i++){
         if (i%28 == 0) std::cout << std::endl;
         uint32_t el = (uint32_t)image_raw[i];
         if (el != 0)
@@ -33,12 +33,12 @@ int main(int argc, char** argv){
         else
             std::cout << "  ";
     }
-    std::cout << std::endl;
+    std::cout << std::endl;*/
 
     std::cout << std::fixed << std::setprecision(2);
 
     std::cout << std::dec;
-    uint32_t pollingrate = 1;
+    uint32_t pollingrate = 100;
     uint32_t count = 0;
     while (true){
 
