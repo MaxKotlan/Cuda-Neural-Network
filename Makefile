@@ -13,7 +13,7 @@ all: $(MAINOBJ)
 	nvcc $(MAINLIB) -o NeuralNetwork.lib -lib
 
 test: $(TESTOBJ)
-	nvcc $(TESTOBJ) -o NeuralNetworkTests -lcublas -lNeuralNetwork
+	nvcc $(TESTOBJ) -o NeuralNetworkTests -lcublas --link NeuralNetwork.lib
 
 %.obj: %.cpp
 	nvcc -x cu -I ./include/ -I ./ -dc $< -o $@ 
