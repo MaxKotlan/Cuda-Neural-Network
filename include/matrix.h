@@ -1,6 +1,7 @@
 #ifndef MATRIX_H
 #define MATRIX_H
 #include <thrust/device_vector.h>
+#include <cstdint>
 
 void MatrixMultiply(
     uint32_t m, uint32_t k, uint32_t n,
