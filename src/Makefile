@@ -1,10 +1,10 @@
-objects = main.o idx.o idx-cuda.o neuralnetwork.o layer.o matrix.o normalizebyte.o image-cuda.o
+objects = main.obj idx.obj idx-cuda.obj neuralnetwork.obj layer.obj matrix.obj normalizebyte.obj image-cuda.obj
 
 all: $(objects)
 	nvcc $(objects) -o NeuralNetwork -lcublas
 
-%.o: %.cpp
+%.obj: %.cpp
 	nvcc -x cu -I ../include/ -dc $< -o $@
 
 clean:
-	rm -f *.o app
+	rm -f *.obj app

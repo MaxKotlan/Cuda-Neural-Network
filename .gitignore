@@ -5,4 +5,5 @@
 *.pdb
 *.csv
 *.o
+*.obj
 Convolution
