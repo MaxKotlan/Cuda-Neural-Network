@@ -10,10 +10,10 @@ namespace IDX
         DEBUG("Done Copying Raw Data Into VRAM" << std::endl);
     }
 
-    CudaImage CudaImageDatabase::GetImage(unsigned int index){
-        assert(index < image_count && index >= 0);
-        unsigned int offset = index*image_x*image_y;
-        CudaImage result(image_x, image_y, thrust::raw_pointer_cast(device_raw_data.data()));
+    CudaImage CudaImageDatabase::GetImage(uint32_t index){
+        assert(index < image_count);
+        uint32_t offset = index*image_x*image_y;
+        CudaImage result(image_x, image_y, thrust::raw_pointer_cast(device_raw_data.data()+offset));
         return result;
     }
 }

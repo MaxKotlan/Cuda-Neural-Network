@@ -46,15 +46,15 @@ namespace IDX
         fclose(database);
     }
 
-    Image ImageDatabase::GetImage(unsigned int index){
+    Image ImageDatabase::GetImage(uint32_t index){
         assert(index < image_count);
-        unsigned int offset = index*image_x*image_y;
+        uint32_t offset = index*image_x*image_y;
         Image result(image_x, image_y, &raw_data[offset]);
         return result;
     }
 
-    uint32_t LabelDatabase::GetLabel(unsigned int index){
-        unsigned int offset = index;
+    uint32_t LabelDatabase::GetLabel(uint32_t index){
+        uint32_t offset = index;
         return (uint32_t)raw_data[offset];
     }
 
