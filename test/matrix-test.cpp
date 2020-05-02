@@ -12,7 +12,7 @@
 
 
 void TestMatrix(){
-     std::cout << "TESTING MATRIX" << std::endl;
+    std::cout << "TESTING MATRIX" << std::endl;
 
     std::vector<float> mat_a{ 0,1,
                               2,3,
@@ -36,5 +36,6 @@ void TestMatrix(){
 
     for (int i = 0; i < mat_c.size(); i++)
         assert(shouldbe[i] == mat_c[i]);
+    std::cout << "MATRIX IS CORRECT" << std::endl;
 
 }
