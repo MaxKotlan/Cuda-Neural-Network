@@ -7,10 +7,10 @@
 
 int main(int argc, char** argv){
     
-    IDX::CudaImageDatabase t10k("../data/t10k-images.idx3-ubyte");
-    IDX::LabelDatabase t10klab("../data/t10k-labels.idx1-ubyte");
-    IDX::CudaImageDatabase t10ktrain("../data/train-images.idx3-ubyte");
-    IDX::LabelDatabase t10ktrainlab("../data/train-labels.idx1-ubyte");
+    IDX::CudaImageDatabase t10k("data/t10k-images.idx3-ubyte");
+    IDX::LabelDatabase t10klab("data/t10k-labels.idx1-ubyte");
+    IDX::CudaImageDatabase t10ktrain("data/train-images.idx3-ubyte");
+    IDX::LabelDatabase t10ktrainlab("data/train-labels.idx1-ubyte");
 
     srand(132);
     NeuralNetwork mynn(t10k.x()*t10k.y(), 16, 20, 10, 1.0);

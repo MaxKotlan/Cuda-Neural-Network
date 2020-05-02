@@ -1,4 +1,7 @@
+#include <iostream>
+#include "matrix-test.h"
 
-void test(){
-    
+void main(int argc, char** argv){
+    std::cout << "STARTING TESTS" << std::endl;
+
 }
