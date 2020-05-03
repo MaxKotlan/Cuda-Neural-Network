@@ -10,9 +10,8 @@ namespace IDX
     
     Database::Database(std::string filename) : filename(filename){
         DEBUG(filename << ": Checking File Headers" << std::endl);
-        database = fopen(filename.c_str(), "r");
+        database = fopen(filename.c_str(), "rb");
         if (database != NULL){
-            _fseeki64(database, 0, SEEK_SET);
             unsigned char padding;
             fread(&padding, 1, 1, database); assert(padding == 0); //IDX standard dictates first two bytes are zero
             fread(&padding, 1, 1, database); assert(padding == 0);
