@@ -59,7 +59,6 @@ void NeuralNetwork::TrainSingle(std::vector<float>& input, uint32_t correct){
 }
 
 void NeuralNetwork::TrainSingle(thrust::device_vector<float>& input, uint32_t correct){
-    _training_count++;
 
     auto outputlayer = ForwardPropagate(input);
 
@@ -76,8 +75,14 @@ void NeuralNetwork::TrainSingle(thrust::device_vector<float>& input, uint32_t co
     for (int i = _layers.size()-1; i >= 0; i--)
         _layers[i].CalculateGradient(cost);
 
-    for (auto &layer : _layers)
-        layer.ApplyDeltas();
+    const uint32_t batchsize = 10;
+    if(_training_count%batchsize == 0){
+        for (auto &layer : _layers)
+            layer.ApplyDeltas();
+        _training_count=0;
+    }
+    _training_count++;
+    
 }
 
 void NeuralNetwork::Reset(){

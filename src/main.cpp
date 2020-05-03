@@ -13,7 +13,7 @@ int main(int argc, char** argv){
     IDX::LabelDatabase t10ktrainlab("data/train-labels.idx1-ubyte");
 
     srand(132);
-    NeuralNetwork mynn(t10k.x()*t10k.y(), 16, 20, 10, 1.0);
+    NeuralNetwork mynn(t10k.x()*t10k.y(), 16, 2, 10, 1.0);
 
     uint32_t imageindex;
     std::cout << " Enter Image Index: ";

@@ -40,6 +40,8 @@ void LayerConnector::InitalizeWithRandomValues(){
     curandGenerateUniform(generator, thrust::raw_pointer_cast(d_weights.data()), d_weights.size());
     curandGenerateUniform(generator, thrust::raw_pointer_cast(d_biases.data()),  d_biases.size());
 
+    thrust::fill(d_delta_weights.begin(), d_delta_weights.end(), 0);
+    thrust::fill(d_delta_biases.begin(),  d_delta_biases.end(),  0);
 }
 
 thrust::device_vector<float> LayerConnector::operator()(thrust::device_vector<float> &d_input){
@@ -84,11 +86,13 @@ void LayerConnector::CalculateGradient(thrust::device_vector<float>& d_cost){
 
     MatrixMultiply(
         d_input.size(), 1, d_activation_delta.size(),
-        1.0, 0.0, 
+        1.0, 1.0, 
         d_input, d_activation_delta, d_delta_weights
     );
 
-    thrust::transform(d_activation_delta.begin(), d_activation_delta.end(), d_biases.begin(), d_delta_biases.begin(), thrust::multiplies<float>());
+    thrust::transform(d_activation_delta.begin(), d_activation_delta.end(), d_delta_biases.begin(), d_delta_biases.begin(), thrust::multiplies<float>());
+    thrust::transform(d_biases.begin(), d_biases.end(), d_delta_biases.begin(), d_delta_biases.begin(), thrust::multiplies<float>());
+
 }
 
 thrust::device_vector<float> LayerConnector::CalculatePreviousLayerDelta(){
@@ -114,14 +118,9 @@ void LayerConnector::ApplyDeltas(){
     thrust::transform(d_delta_weights.begin(), d_delta_weights.end(), thrust::make_constant_iterator(_neuralnetwork->getLearningRate()), d_delta_weights.begin(), thrust::multiplies<float>());
     thrust::transform(d_delta_biases.begin(), d_delta_biases.end(), thrust::make_constant_iterator(_neuralnetwork->getLearningRate()), d_delta_biases.begin(), thrust::multiplies<float>());
 
-    //thrust::device_vector<float> intermediate_weights(d_delta_weights.size());
-    //thrust::transform(d_delta_weights.begin(), d_delta_weights.end(), d_weights.begin(), intermediate_weights.begin(), thrust::plus<float>());
-    //thrust::transform(intermediate_weights.begin(), intermediate_weights.end(), thrust::make_constant_iterator((float)_neuralnetwork->getTrainingCount()), intermediate_weights.begin(), thrust::divides<float>());
+    thrust::transform(d_delta_weights.begin(), d_delta_weights.end(), thrust::make_constant_iterator((float)(_neuralnetwork->getTrainingCount()+1)), d_delta_weights.begin(), thrust::divides<float>());
     thrust::transform(d_weights.begin(), d_weights.end(), d_delta_weights.begin(), d_weights.begin(), thrust::minus<float>());
 
-
-    //thrust::device_vector<float> intermediate_biases(d_delta_biases.size());
-    //thrust::transform(d_delta_biases.begin(), d_delta_biases.end(), d_weights.begin(), intermediate_biases.begin(), thrust::plus<float>());
-    //thrust::transform(intermediate_biases.begin(), intermediate_biases.end(), thrust::make_constant_iterator((float)_neuralnetwork->getTrainingCount()), intermediate_biases.begin(), thrust::divides<float>());
+    thrust::transform(d_delta_biases.begin(), d_delta_biases.end(), thrust::make_constant_iterator((float)(_neuralnetwork->getTrainingCount()+1)), d_delta_biases.begin(), thrust::divides<float>());
     thrust::transform(d_biases.begin(), d_biases.end(), d_delta_biases.begin(), d_biases.begin(), thrust::minus<float>());
 }
