@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include "memtransfer.h"
 #include "debug.h"
 
 NeuralNetwork::NeuralNetwork(uint32_t inputsize, uint32_t hiddenlayersize, uint32_t hiddenlayercount, uint32_t outputsize, float learningrate) 
@@ -33,11 +34,7 @@ thrust::device_vector<float> NeuralNetwork::operator() (thrust::device_vector<fl
 
 
 std::vector<float> NeuralNetwork::operator()(std::vector<float>& input){
-    thrust::device_vector<float> d_input = input;
-    d_input = ForwardPropagate(d_input);
-    std::vector<float> result(d_input.size());
-    thrust::copy(d_input.begin(), d_input.end(), result.begin());
-    return std::move(result);
+    return std::move(ToHost(ForwardPropagate(ToDevice(input))));
 }
 
 thrust::device_vector<float> NeuralNetwork::ForwardPropagate(thrust::device_vector<float>& d_input){
@@ -47,16 +44,11 @@ thrust::device_vector<float> NeuralNetwork::ForwardPropagate(thrust::device_vect
 }
 
 std::vector<float> NeuralNetwork::ForwardPropagate(std::vector<float>& input){
-    thrust::device_vector<float> d_input = input;
-    d_input = ForwardPropagate(d_input);
-    std::vector<float> outvec(d_input.size());
-    thrust::copy(d_input.begin(), d_input.end(), outvec.begin());
-    return std::move(outvec);
+    return std::move(ToHost(ForwardPropagate(ToDevice(input))));
 }
 
 void NeuralNetwork::TrainSingle(std::vector<float>& input, uint32_t correct){
-    thrust::device_vector<float> d_input = input;
-    TrainSingle(d_input, correct);
+    TrainSingle(ToDevice(input), correct);
 }
 
 void NeuralNetwork::TrainSingle(thrust::device_vector<float>& input, uint32_t correct){
