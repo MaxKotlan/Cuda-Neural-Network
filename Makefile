@@ -9,11 +9,11 @@ MAINLIB = $(filter-out $(SOURCE)main.obj, $(MAINOBJ))
 TESTOBJ = $(addprefix $(TESTDIR),$(TEST))
 
 all: $(MAINOBJ)
-	nvcc $(MAINOBJ) -o NeuralNetwork -lcublas
+	nvcc $(MAINOBJ) -o NeuralNetwork -lcublas -lcurand
 
 test: $(TESTOBJ)
 	nvcc $(MAINLIB) -o NeuralNetwork.lib -lib
-	nvcc $(TESTOBJ) -o NeuralNetworkTests -lcublas --link NeuralNetwork.lib
+	nvcc $(TESTOBJ) -o NeuralNetworkTests -lcublas -lcurand --link NeuralNetwork.lib
 
 %.obj: %.cpp
 	nvcc -x cu -I ./include/ -I ./ -dc $< -o $@ 
