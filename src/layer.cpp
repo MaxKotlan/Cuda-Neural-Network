@@ -40,6 +40,9 @@ void LayerConnector::InitalizeWithRandomValues(){
     curandGenerateUniform(generator, thrust::raw_pointer_cast(d_weights.data()), d_weights.size());
     curandGenerateUniform(generator, thrust::raw_pointer_cast(d_biases.data()),  d_biases.size());
 
+    thrust::fill(d_delta_weights.begin(), d_delta_weights.end(), 0);
+    thrust::fill(d_delta_biases.begin(), d_delta_biases.end(), 0);
+
 }
 
 thrust::device_vector<float> LayerConnector::operator()(thrust::device_vector<float> &d_input){
@@ -82,13 +85,24 @@ void LayerConnector::CalculateGradient(thrust::device_vector<float>& d_cost){
         thrust::transform(d_activation_delta.begin(), d_activation_delta.end(), previous_layer_delta.begin(), d_activation_delta.begin(), thrust::multiplies<float>());
     }
 
+    thrust::device_vector<float> value_new(d_delta_weights.size());
+
     MatrixMultiply(
         d_input.size(), 1, d_activation_delta.size(),
         1.0, 0.0, 
-        d_input, d_activation_delta, d_delta_weights
+        d_input, d_activation_delta, value_new
     );
 
-    thrust::transform(d_activation_delta.begin(), d_activation_delta.end(), d_biases.begin(), d_delta_biases.begin(), thrust::multiplies<float>());
+    thrust::transform(value_new.begin(), value_new.end(), d_delta_weights.begin(), value_new.begin(), thrust::minus<float>());
+    //thrust::transform(value_new.begin(), value_new.end(), thrust::make_constant_iterator((float)_neuralnetwork->getTrainingCount()), value_new.begin(), thrust::divides<float>());
+    thrust::transform(d_delta_weights.begin(), d_delta_weights.end(), value_new.begin(), d_delta_weights.begin(), thrust::plus<float>());
+
+    thrust::device_vector<float> value_new_bias(d_delta_biases.size());
+    thrust::transform(d_activation_delta.begin(), d_activation_delta.end(), d_biases.begin(), value_new_bias.begin(), thrust::multiplies<float>());
+    thrust::transform(value_new_bias.begin(), value_new_bias.end(), d_delta_biases.begin(), value_new_bias.begin(), thrust::minus<float>());
+    //thrust::transform(value_new_bias.begin(), value_new_bias.end(), thrust::make_constant_iterator((float)_neuralnetwork->getTrainingCount()), value_new_bias.begin(), thrust::divides<float>());
+    thrust::transform(d_delta_biases.begin(), d_delta_biases.end(), value_new_bias.begin(), d_delta_biases.begin(), thrust::plus<float>());
+
 }
 
 thrust::device_vector<float> LayerConnector::CalculatePreviousLayerDelta(){

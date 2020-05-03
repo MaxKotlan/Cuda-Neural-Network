@@ -76,6 +76,7 @@ void NeuralNetwork::TrainSingle(thrust::device_vector<float>& input, uint32_t co
     for (int i = _layers.size()-1; i >= 0; i--)
         _layers[i].CalculateGradient(cost);
 
+    //if (_training_count%10 == 0)
     for (auto &layer : _layers)
         layer.ApplyDeltas();
 }
