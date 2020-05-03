@@ -75,13 +75,14 @@ void NeuralNetwork::TrainSingle(thrust::device_vector<float>& input, uint32_t co
     for (int i = _layers.size()-1; i >= 0; i--)
         _layers[i].CalculateGradient(cost);
 
-    const uint32_t batchsize = 10;
+    const uint32_t batchsize = 100;
     if(_training_count%batchsize == 0 && _training_count != 0){
         for (auto &layer : _layers)
             layer.ApplyDeltas();
         _training_count=0;
+    } else {
+        _training_count++;
     }
-    _training_count++;
     
 }
 

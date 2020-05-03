@@ -36,7 +36,7 @@ void LayerConnector::InitalizeWithRandomValues(){
     curandGenerator_t generator = nullptr;
     if(generator == nullptr) { 
         curandCreateGenerator(&generator, CURAND_RNG_PSEUDO_DEFAULT);    
-        curandSetPseudoRandomGeneratorSeed(generator, 1234ULL);
+        curandSetPseudoRandomGeneratorSeed(generator, 0);
     }
     curandGenerateUniform(generator, thrust::raw_pointer_cast(d_weights.data()), d_weights.size());
     curandGenerateUniform(generator, thrust::raw_pointer_cast(d_biases.data()),  d_biases.size());

@@ -19,9 +19,9 @@ int main(int argc, char** argv){
     std::cout << " Enter Image Index: ";
     std::cin >> imageindex;
 
-    auto image_raw = t10k.GetImage(imageindex);
+    auto image_raw = t10ktrain.GetImage(imageindex);
     auto image = image_raw.Normalize();
-    uint32_t label = t10klab.GetLabel(imageindex);    
+    uint32_t label = t10ktrainlab.GetLabel(imageindex);    
 
     //IDX::ImageDatabase     t10ktrain_reg("../data/train-images.idx3-ubyte");
     //auto image_raw_host = t10k.GetImage(imageindex);
@@ -38,9 +38,14 @@ int main(int argc, char** argv){
     std::cout << std::fixed << std::setprecision(2);
 
     std::cout << std::dec;
-    uint32_t pollingrate = 10;
+    uint32_t pollingrate = 1000;
     uint32_t count = 0;
     while (true){
+
+        image_raw = t10ktrain.GetImage(count%t10ktrain.size());
+        image = image_raw.Normalize();
+        label = t10ktrainlab.GetLabel(count%t10ktrain.size());    
+
 
         if (count%pollingrate == 0){
             auto device_result = mynn.ForwardPropagate(image);
