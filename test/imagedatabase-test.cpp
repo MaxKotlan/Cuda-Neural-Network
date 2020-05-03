@@ -33,6 +33,9 @@ void TestSingle(){
 
 void TestAll(){
     std::cout << "Checking For Null Images" << std::endl;
+
+    std::cout << "TESTING data/t10k-images.idx3-ubyte" << std::endl;
+
     IDX::ImageDatabase t10k("data/t10k-images.idx3-ubyte");
     for (int i = 0; i < t10k.size(); i++){
         Image img = t10k.GetImage(i);
@@ -42,5 +45,20 @@ void TestAll(){
         }
         assert(checksum != 0);
     }
+
+    std::cout << "TESTING data/train-images.idx3-ubyte" << std::endl;
+
+    IDX::ImageDatabase t10ktraining("data/train-images.idx3-ubyte");
+    for (int i = 0; i < t10ktraining.size(); i++){
+        Image img = t10ktraining.GetImage(i);
+        uint64_t checksum = 0;
+        for (auto it = img.begin; it <= img.begin + img.x()*img.y(); it++){
+            checksum += (uint64_t)*it;
+        }
+        if (checksum == 0)
+        std::cout << "FAILED AT " << i << std::endl;
+        //assert(checksum != 0);
+    }
+
 
 }
