@@ -1,10 +1,11 @@
 #include "layer.h"
-#include <cublas_v2.h>
-#include <curand_kernel.h>
 #include "debug.h"
 #include "activation.h"
 #include "neuralnetwork.h"
 #include "matrix.h"
+#include <cublas_v2.h>
+#include <curand.h>
+
 
 LayerConnector::LayerConnector(uint32_t inputsize, uint32_t outputsize, NeuralNetwork* network=nullptr):
     inputsize(inputsize),
@@ -33,13 +34,12 @@ LayerConnector::LayerConnector(uint32_t inputsize, uint32_t outputsize, NeuralNe
 
 void LayerConnector::InitalizeWithRandomValues(){
 
-    static curandGenerator_t generator = nullptr;
-    if (generator == nullptr) curandCreateGeneratorHost(&generator, CURAND_RNG_PSEUDO_DEFAULT);    
-    curandGenerateUniform(generator, thrust::raw_pointer_cast(weights.data()), weights.size());
-    curandGenerateUniform(generator, thrust::raw_pointer_cast(biases.data()), biases.size());
+    curandGenerator_t generator;
+    curandCreateGenerator(&generator, CURAND_RNG_PSEUDO_DEFAULT);    
+    curandSetPseudoRandomGeneratorSeed(generator, 1234ULL);
+    curandGenerateUniform(generator, thrust::raw_pointer_cast(d_weights.data()), d_weights.size());
+    curandGenerateUniform(generator, thrust::raw_pointer_cast(d_biases.data()),  d_biases.size());
 
-    thrust::copy(weights.begin(), weights.end(), d_weights.begin());
-    thrust::copy(biases.begin(),  biases.end(),  d_biases.begin());
 }
 
 thrust::device_vector<float> LayerConnector::operator()(thrust::device_vector<float> &d_input){
