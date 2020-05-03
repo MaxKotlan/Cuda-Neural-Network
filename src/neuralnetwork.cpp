@@ -34,7 +34,10 @@ thrust::device_vector<float> NeuralNetwork::operator() (thrust::device_vector<fl
 
 
 std::vector<float> NeuralNetwork::operator()(std::vector<float>& input){
-    return std::move(ToHost(ForwardPropagate(ToDevice(input))));
+    auto d_input = ToDevice(input);
+    auto result       = ForwardPropagate(d_input);
+    auto host_result  = ToHost(result);
+    return std::move(host_result);
 }
 
 thrust::device_vector<float> NeuralNetwork::ForwardPropagate(thrust::device_vector<float>& d_input){
@@ -44,11 +47,15 @@ thrust::device_vector<float> NeuralNetwork::ForwardPropagate(thrust::device_vect
 }
 
 std::vector<float> NeuralNetwork::ForwardPropagate(std::vector<float>& input){
-    return std::move(ToHost(ForwardPropagate(ToDevice(input))));
+    auto d_input      = ToDevice(input);
+    auto result       = ForwardPropagate(d_input);
+    auto host_result  = ToHost(result);
+    return std::move(host_result);
 }
 
 void NeuralNetwork::TrainSingle(std::vector<float>& input, uint32_t correct){
-    TrainSingle(ToDevice(input), correct);
+    auto d_input = ToDevice(input);
+    TrainSingle(d_input, correct);
 }
 
 void NeuralNetwork::TrainSingle(thrust::device_vector<float>& input, uint32_t correct){
