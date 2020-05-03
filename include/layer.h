@@ -29,15 +29,13 @@ class LayerConnector{
     protected:
         uint32_t inputsize;
         uint32_t outputsize;
-        std::vector<float> weights;
-        std::vector<float> biases;
         thrust::device_vector<float>  d_input;
         thrust::device_vector<float>* d_output_ref; //refrence to output stored in next layer
-        thrust::device_vector<float> d_weights;
-        thrust::device_vector<float> d_biases;
-        thrust::device_vector<float> d_delta_weights;
-        thrust::device_vector<float> d_delta_biases;
-        thrust::device_vector<float> d_activation_delta;
+        thrust::device_vector<float>  d_weights;
+        thrust::device_vector<float>  d_biases;
+        thrust::device_vector<float>  d_delta_weights;
+        thrust::device_vector<float>  d_delta_biases;
+        thrust::device_vector<float>  d_activation_delta;
 
         LayerConnector* _nextLayer;
         NeuralNetwork*  _neuralnetwork;

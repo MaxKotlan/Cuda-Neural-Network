@@ -10,8 +10,6 @@
 LayerConnector::LayerConnector(uint32_t inputsize, uint32_t outputsize, NeuralNetwork* network=nullptr):
     inputsize(inputsize),
     outputsize(outputsize),
-    biases(outputsize), 
-    weights(inputsize*outputsize),
     d_input(inputsize),
     d_output_ref(nullptr),
     d_weights(inputsize*outputsize),
