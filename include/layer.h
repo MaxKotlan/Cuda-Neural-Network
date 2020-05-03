@@ -14,6 +14,7 @@ class LayerConnector{
         LayerConnector(uint32_t inputsize, uint32_t outputsize, NeuralNetwork* network);
 
         void InitalizeWithRandomValues();
+        void ResetDeltaVectors();
         thrust::device_vector<float> CalculateOutputNeurons(thrust::device_vector<float>& input);
         thrust::device_vector<float> operator() (thrust::device_vector<float>& neurons);
 
