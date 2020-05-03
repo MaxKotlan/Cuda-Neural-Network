@@ -3,6 +3,7 @@
 #include <iostream>
 #include <algorithm> 
 #include <vector>
+#include <gsl/gsl>
 
 void TestSingle();    
 void TestAll();
@@ -12,6 +13,8 @@ void TestImageDatabase(){
     void TestSingle();
     void TestAll(); 
     std::cout << "Finished Database Tests" << std::endl; 
+    std::vector<int> myvec{1,2,3,4,5,6,7,8,9};
+    auto my_subspan = gsl::make_span(myvec).subspan(3, 5);
 }
 
 void TestSingle(){

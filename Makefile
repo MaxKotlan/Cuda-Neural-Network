@@ -16,7 +16,7 @@ test: $(TESTOBJ)
 	nvcc $(TESTOBJ) -o NeuralNetworkTests -lcublas -lcurand --link NeuralNetwork.lib
 
 %.obj: %.cpp
-	nvcc -x cu -I ./include/ -I ./ -dc $< -o $@ 
+	nvcc -x cu -I ./include/ -I ./ -I ./lib/GSL/include/ -dc $< -o $@ 
 
 clean:
 	rm -f *.obj NeuralNetwork NeuralNetworkTests
