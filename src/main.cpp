@@ -38,7 +38,7 @@ int main(int argc, char** argv){
     std::cout << std::fixed << std::setprecision(2);
 
     std::cout << std::dec;
-    uint32_t pollingrate = 100;
+    uint32_t pollingrate = 10;
     uint32_t count = 0;
     while (true){
 

@@ -32,9 +32,11 @@ LayerConnector::LayerConnector(uint32_t inputsize, uint32_t outputsize, NeuralNe
 
 void LayerConnector::InitalizeWithRandomValues(){
 
-    curandGenerator_t generator;
-    curandCreateGenerator(&generator, CURAND_RNG_PSEUDO_DEFAULT);    
-    curandSetPseudoRandomGeneratorSeed(generator, 1234ULL);
+    curandGenerator_t generator = nullptr;
+    if(generator == nullptr) { 
+        curandCreateGenerator(&generator, CURAND_RNG_PSEUDO_DEFAULT);    
+        curandSetPseudoRandomGeneratorSeed(generator, 1234ULL);
+    }
     curandGenerateUniform(generator, thrust::raw_pointer_cast(d_weights.data()), d_weights.size());
     curandGenerateUniform(generator, thrust::raw_pointer_cast(d_biases.data()),  d_biases.size());
 
