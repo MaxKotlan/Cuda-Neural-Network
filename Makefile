@@ -11,8 +11,10 @@ TESTOBJ = $(addprefix $(TESTDIR),$(TEST))
 all: $(MAINOBJ)
 	nvcc $(MAINOBJ) -o NeuralNetwork -lcublas -lcurand
 
-test: $(TESTOBJ)
+lib: $(MAINLIB)
 	nvcc $(MAINLIB) -o NeuralNetwork.lib -lib
+
+test: lib $(TESTOBJ)
 	nvcc $(TESTOBJ) -o NeuralNetworkTests -lcublas -lcurand --link NeuralNetwork.lib
 
 %.obj: %.cpp
