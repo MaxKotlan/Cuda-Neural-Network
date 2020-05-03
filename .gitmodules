@@ -1,3 +1,6 @@
 [submodule "lib/Cuda-Convolution-Benchmark"]
 	path = lib/Cuda-Convolution-Benchmark
 	url = https://github.com/MaxKotlan/Cuda-Convolution-Benchmark.git
+[submodule "lib/GSL"]
+	path = lib/GSL
+	url = https://github.com/microsoft/GSL.git
