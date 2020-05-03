@@ -10,8 +10,8 @@ void TestAll();
 
 void TestImageDatabase(){
     std::cout << "STARTING Database Tests" << std::endl;
-    void TestSingle();
-    void TestAll(); 
+    TestSingle();
+    TestAll(); 
     std::cout << "Finished Database Tests" << std::endl; 
     std::vector<int> myvec{1,2,3,4,5,6,7,8,9};
     auto my_subspan = gsl::make_span(myvec).subspan(3, 5);
