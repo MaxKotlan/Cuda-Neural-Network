@@ -35,6 +35,7 @@ thrust::device_vector<float> NeuralNetwork::operator() (thrust::device_vector<fl
 
 std::vector<float> NeuralNetwork::operator()(std::vector<float>& input){
     auto d_input = ToDevice(input);
+    cudaDeviceSynchronize();
     auto result       = ForwardPropagate(d_input);
     auto host_result  = ToHost(result);
     return std::move(host_result);
@@ -48,6 +49,7 @@ thrust::device_vector<float> NeuralNetwork::ForwardPropagate(thrust::device_vect
 
 std::vector<float> NeuralNetwork::ForwardPropagate(std::vector<float>& input){
     auto d_input      = ToDevice(input);
+    cudaDeviceSynchronize();
     auto result       = ForwardPropagate(d_input);
     auto host_result  = ToHost(result);
     return std::move(host_result);
@@ -55,6 +57,7 @@ std::vector<float> NeuralNetwork::ForwardPropagate(std::vector<float>& input){
 
 void NeuralNetwork::TrainSingle(std::vector<float>& input, uint32_t correct){
     auto d_input = ToDevice(input);
+    cudaDeviceSynchronize();
     TrainSingle(d_input, correct);
 }
 
@@ -75,7 +78,7 @@ void NeuralNetwork::TrainSingle(thrust::device_vector<float>& input, uint32_t co
     for (int i = _layers.size()-1; i >= 0; i--)
         _layers[i].CalculateGradient(cost);
 
-    const uint32_t batchsize = 100;
+    const uint32_t batchsize = 1000;
     if(_training_count%batchsize == 0 && _training_count != 0){
         for (auto &layer : _layers)
             layer.ApplyDeltas();

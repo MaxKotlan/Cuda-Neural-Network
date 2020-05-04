@@ -4,7 +4,8 @@
 
 template <typename T>
 thrust::device_vector<T> ToDevice(std::vector<T>& input){
-    return std::move(thrust::device_vector<T>(input.begin(), input.end()));
+    thrust::device_vector<T> result = thrust::device_vector<T>(input.begin(), input.end());
+    return std::move(result);
 }
 
 template <typename T>

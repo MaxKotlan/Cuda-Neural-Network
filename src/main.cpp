@@ -7,9 +7,9 @@
 
 int main(int argc, char** argv){
     
-    IDX::CudaImageDatabase t10k("data/t10k-images.idx3-ubyte");
+    IDX::ImageDatabase t10k("data/t10k-images.idx3-ubyte");
     IDX::LabelDatabase t10klab("data/t10k-labels.idx1-ubyte");
-    IDX::CudaImageDatabase t10ktrain("data/train-images.idx3-ubyte");
+    IDX::ImageDatabase t10ktrain("data/train-images.idx3-ubyte");
     IDX::LabelDatabase t10ktrainlab("data/train-labels.idx1-ubyte");
 
     srand(132);
@@ -38,7 +38,7 @@ int main(int argc, char** argv){
     std::cout << std::fixed << std::setprecision(2);
 
     std::cout << std::dec;
-    uint32_t pollingrate = 1000;
+    uint32_t pollingrate = 10;
     uint32_t count = 0;
     while (true){
 
@@ -65,8 +65,8 @@ int main(int argc, char** argv){
             std::cout << std::fixed << std::setprecision(6) << " error: " << total;
             std::cout << std::endl;
         }
-
-        mynn.TrainSingle(image, label);
+        for (int i = 0; i < 100; i++)
+            mynn.TrainSingle(image, label);
         count++;
     }
 }
