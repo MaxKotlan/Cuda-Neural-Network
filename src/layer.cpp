@@ -29,6 +29,7 @@ LayerConnector::LayerConnector(uint32_t inputsize, uint32_t outputsize, NeuralNe
     }
     InitalizeWithRandomValues();
     ResetDeltaVectors();
+    cudaDeviceSynchronize();
 };
 
 void LayerConnector::InitalizeWithRandomValues(){
@@ -63,8 +64,9 @@ thrust::device_vector<float> LayerConnector::CalculateOutputNeurons(thrust::devi
         1.0,1.0,
         d_weights, d_input, d_output
     );
-
+    cudaDeviceSynchronize();
     thrust::transform(d_output.begin(), d_output.end(), d_output.begin(), Activation::Sigmoid());
+    cudaDeviceSynchronize();
     return std::move(d_output);
 }
 
@@ -82,10 +84,13 @@ void LayerConnector::CalculateGradient(thrust::device_vector<float>& d_cost){
     if (_nextLayer == nullptr) {
         /*If output layer use cost vector*/
         thrust::transform(d_activation_delta.begin(), d_activation_delta.end(), d_cost.begin(), d_activation_delta.begin(), thrust::multiplies<float>());
+        cudaDeviceSynchronize();
     } else {
         /*otherwise use previous layer*/
         thrust::device_vector<float> previous_layer_delta = CalculatePreviousLayerDelta();
+        cudaDeviceSynchronize();
         thrust::transform(d_activation_delta.begin(), d_activation_delta.end(), previous_layer_delta.begin(), d_activation_delta.begin(), thrust::multiplies<float>());
+        cudaDeviceSynchronize();
     }
 
     MatrixMultiply(
@@ -93,10 +98,12 @@ void LayerConnector::CalculateGradient(thrust::device_vector<float>& d_cost){
         1.0, 1.0, 
         d_input, d_activation_delta, d_delta_weights
     );
-
-    thrust::device_vector<float> newdeltabias(d_delta_biases.size());
+    cudaDeviceSynchronize();
+    thrust::device_vector<float> newdeltabias(d_delta_biases.size()); cudaDeviceSynchronize();
     thrust::transform(d_activation_delta.begin(), d_activation_delta.end(), d_biases.begin(), newdeltabias.begin(), thrust::multiplies<float>());
+    cudaDeviceSynchronize();
     thrust::transform(newdeltabias.begin(), newdeltabias.end(), d_delta_biases.begin(), d_delta_biases.begin(), thrust::plus<float>());
+    cudaDeviceSynchronize();
 
 }
 
@@ -108,6 +115,7 @@ thrust::device_vector<float> LayerConnector::CalculatePreviousLayerDelta(){
         1.0, 0.0, 
         _nextLayer->d_weights, _nextLayer->d_activation_delta, previous_layer_delta
     );
+    cudaDeviceSynchronize();
 
     return std::move(previous_layer_delta);
 }
@@ -115,19 +123,27 @@ thrust::device_vector<float> LayerConnector::CalculatePreviousLayerDelta(){
 thrust::device_vector<float> LayerConnector::GenerateActivationDelta(const thrust::device_vector<float>& output_layer){
     thrust::device_vector<float> d_activation_delta = output_layer;
     thrust::transform(d_activation_delta.begin(), d_activation_delta.end(), d_activation_delta.begin(), Activation::SigmoidDerivative());
+    cudaDeviceSynchronize();
     return std::move(d_activation_delta);
 }
 
 void LayerConnector::ApplyDeltas(){
     /*Multiply Deltas by the learning rate*/
     thrust::transform(d_delta_weights.begin(), d_delta_weights.end(), thrust::make_constant_iterator(_neuralnetwork->getLearningRate()), d_delta_weights.begin(), thrust::multiplies<float>());
+    cudaDeviceSynchronize();
     thrust::transform(d_delta_biases.begin(), d_delta_biases.end(), thrust::make_constant_iterator(_neuralnetwork->getLearningRate()), d_delta_biases.begin(), thrust::multiplies<float>());
+    cudaDeviceSynchronize();
 
     thrust::transform(d_delta_weights.begin(), d_delta_weights.end(), thrust::make_constant_iterator((float)(_neuralnetwork->getTrainingCount())), d_delta_weights.begin(), thrust::divides<float>());
+    cudaDeviceSynchronize();
     thrust::transform(d_weights.begin(), d_weights.end(), d_delta_weights.begin(), d_weights.begin(), thrust::minus<float>());
+    cudaDeviceSynchronize();
 
     thrust::transform(d_delta_biases.begin(), d_delta_biases.end(), thrust::make_constant_iterator((float)(_neuralnetwork->getTrainingCount())), d_delta_biases.begin(), thrust::divides<float>());
+    cudaDeviceSynchronize();
     thrust::transform(d_biases.begin(), d_biases.end(), d_delta_biases.begin(), d_biases.begin(), thrust::minus<float>());
+    cudaDeviceSynchronize();
 
     ResetDeltaVectors();
+    cudaDeviceSynchronize();
 }

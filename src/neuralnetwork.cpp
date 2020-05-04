@@ -66,10 +66,10 @@ void NeuralNetwork::TrainSingle(thrust::device_vector<float>& input, uint32_t co
     float incorrectvalue = 0.0;
 
     thrust::device_vector<float> cost(outputlayer.size());
-    thrust::fill(cost.begin(), cost.end(), incorrectvalue);
-    thrust::copy(&correctvalue, &correctvalue+1, (cost.begin()+correct));
-    thrust::transform(outputlayer.begin(), outputlayer.end(), cost.begin(), cost.begin(), thrust::minus<float>());
-    thrust::transform(cost.begin(), cost.end(), thrust::make_constant_iterator(2), cost.begin(), thrust::multiplies<float>());
+    thrust::fill(cost.begin(), cost.end(), incorrectvalue); cudaDeviceSynchronize();
+    thrust::copy(&correctvalue, &correctvalue+1, (cost.begin()+correct)); cudaDeviceSynchronize();
+    thrust::transform(outputlayer.begin(), outputlayer.end(), cost.begin(), cost.begin(), thrust::minus<float>()); cudaDeviceSynchronize();
+    thrust::transform(cost.begin(), cost.end(), thrust::make_constant_iterator(2), cost.begin(), thrust::multiplies<float>()); cudaDeviceSynchronize();
     
     _layers[_layers.size()-1].SetOutputReference(&outputlayer);
     for (int i = _layers.size()-1; i >= 0; i--)
