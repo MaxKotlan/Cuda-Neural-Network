@@ -7,21 +7,21 @@
 
 int main(int argc, char** argv){
     
-    IDX::CudaImageDatabase t10k("data/t10k-images.idx3-ubyte");
+    IDX::ImageDatabase t10k("data/t10k-images.idx3-ubyte");
     IDX::LabelDatabase t10klab("data/t10k-labels.idx1-ubyte");
-    IDX::CudaImageDatabase t10ktrain("data/train-images.idx3-ubyte");
+    IDX::ImageDatabase t10ktrain("data/train-images.idx3-ubyte");
     IDX::LabelDatabase t10ktrainlab("data/train-labels.idx1-ubyte");
 
     srand(132);
-    NeuralNetwork mynn(t10k.x()*t10k.y(), 16, 20, 10, 1.0);
+    NeuralNetwork mynn(t10k.x()*t10k.y(), 16, 2, 10, 1.0);
 
     uint32_t imageindex;
     std::cout << " Enter Image Index: ";
     std::cin >> imageindex;
 
-    auto image_raw = t10k.GetImage(imageindex);
+    auto image_raw = t10ktrain.GetImage(imageindex);
     auto image = image_raw.Normalize();
-    uint32_t label = t10klab.GetLabel(imageindex);    
+    uint32_t label = t10ktrainlab.GetLabel(imageindex);    
 
     //IDX::ImageDatabase     t10ktrain_reg("../data/train-images.idx3-ubyte");
     //auto image_raw_host = t10k.GetImage(imageindex);
@@ -42,6 +42,11 @@ int main(int argc, char** argv){
     uint32_t count = 0;
     while (true){
 
+        image_raw = t10ktrain.GetImage(count%t10ktrain.size());
+        image = image_raw.Normalize();
+        label = t10ktrainlab.GetLabel(count%t10ktrain.size());    
+
+
         if (count%pollingrate == 0){
             auto device_result = mynn.ForwardPropagate(image);
             std::vector<float> result(device_result.size());
@@ -60,8 +65,8 @@ int main(int argc, char** argv){
             std::cout << std::fixed << std::setprecision(6) << " error: " << total;
             std::cout << std::endl;
         }
-
-        mynn.TrainSingle(image, label);
+        for (int i = 0; i < 100; i++)
+            mynn.TrainSingle(image, label);
         count++;
     }
 }

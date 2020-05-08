@@ -10,8 +10,8 @@ namespace IDX
     
     Database::Database(std::string filename) : filename(filename){
         DEBUG(filename << ": Checking File Headers" << std::endl);
-        database = fopen(filename.c_str(), "r");
-        if (database){
+        database = fopen(filename.c_str(), "rb");
+        if (database != NULL){
             unsigned char padding;
             fread(&padding, 1, 1, database); assert(padding == 0); //IDX standard dictates first two bytes are zero
             fread(&padding, 1, 1, database); assert(padding == 0);
@@ -69,7 +69,7 @@ namespace IDX
     void Database::CopyRawData(unsigned int bytes){
         DEBUG(filename << ": Copying Raw Data Into Memory" << std::endl);
         raw_data.resize(bytes);
-        fread(raw_data.data(), bytes, 1, database);
+        fread(raw_data.data(), 1, bytes, database);
         DEBUG(filename << ": Finished Copying Raw Data (" << raw_data.size() << " BYTES) Into Memory" << std::endl);
     }
 
